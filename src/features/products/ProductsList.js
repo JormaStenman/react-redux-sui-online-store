@@ -1,7 +1,8 @@
-import {Message, Placeholder, Table} from "semantic-ui-react";
+import {Loader, Message, Placeholder, Table} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchProducts, LoadingStatus, selectTopState} from "./productsSlice";
 import {useEffect} from "react";
+import {currency} from "../../app/numberFormats";
 
 const ProductList = () => {
     const products = useSelector(state => selectTopState(state).products);
@@ -20,6 +21,7 @@ const ProductList = () => {
             return (
                 <Placeholder>
                     <Message content='loading products...'/>
+                    <Loader active/>
                 </Placeholder>
             );
         case LoadingStatus.failed:
@@ -43,7 +45,7 @@ const ProductList = () => {
                             <Table.Row key={product.id}>
                                 <Table.Cell>{product.id}</Table.Cell>
                                 <Table.Cell>{product.name}</Table.Cell>
-                                <Table.Cell>{product.price}</Table.Cell>
+                                <Table.Cell>{currency.format(product.price || 0)}</Table.Cell>
                             </Table.Row>
                         ))}
                     </Table.Body>

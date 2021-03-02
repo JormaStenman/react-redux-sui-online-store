@@ -1,10 +1,16 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import client from "../../app/client";
 
-export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-    const response = await client.getAllProducts();
-    return response.products || response;
-});
+export const fetchProducts = createAsyncThunk(
+    'products/fetchProducts',
+    async (_, {rejectWithValue}) => {
+        try {
+            return await client.getAllProducts();
+        } catch (e) {
+            return rejectWithValue(e.message || 'error fetching products');
+        }
+    }
+);
 
 export const LoadingStatus = {
     failed: 'failed',
@@ -33,12 +39,12 @@ export const productsSlice = createSlice({
         },
         [fetchProducts.fulfilled]: (state, action) => {
             state.status = LoadingStatus.success;
-            state.products = action.payload;
+            state.products = action.payload.products || [];
             state.error = null;
         },
-        [fetchProducts.rejected]: state => {
+        [fetchProducts.rejected]: (state, action) => {
             state.status = LoadingStatus.failed;
-            state.error = 'error loading products';
+            state.error = action.payload;
         },
     },
 });
