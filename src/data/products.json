@@ -1,0 +1,50 @@
+[
+  {
+    "id": "13289",
+    "name": "Apple iPhone SE 64 Gt -puhelin, musta",
+    "details": "Apple iPhone SE on kaikkien aikojen tehokkain 4,7 tuuman iPhone. Sen A13 Bionic -siru on älypuhelinten nopein ja se tuo vaikuttavaa suorituskykyä appeihin, peleihin ja valokuvaukseen. Muotokuvatila studiotasoisia muotokuvia varten, ja lisäksi kuusi valotehostetta. Seuraavan sukupolven älykkäällä HDR:llä saat loistavasti yksityiskohtia niin kirkkaissa kuin varjoisissakin kohdissa. Elokuvatasoinen 4K- video. Ja kaikki iOS:n edistykselliset ominaisuudet. Pitkä akunkesto ja vesitiiviys ovat juuri niitä ominaisuuksia, joita iPhonessa kaipaat - nyt pienemmässä koossa.",
+    "price": 448.9,
+    "inventory": 50,
+    "imageUrl": "/product_pics/13289.jpeg"
+  },
+  {
+    "id": "31058",
+    "name": "Apple AirPods Pro -nappikuulokkeet",
+    "details": "AirPods Pro -kuulokkeet on suunniteltu tuottamaan vangitseva äänielämys aktiivisen taustamelun vaimennuksen avulla. Läpikuulumistilan ansiosta voit kuulla ympäristön äänet. Kuulokkeiden istuvuus on säädettävissä, joten niitä käyttää mukavasti vaikka koko päivän. AirPodien tavoin AirPods Pro -kuulokkeet muodostavat taianomaisesti yhteyden iPhoneesi tai Apple Watchiisi. Ja ne ovat käyttövalmiit suoraan kotelosta.",
+    "price": 207.9,
+    "inventory": 60,
+    "imageUrl": "/product_pics/31058.jpeg"
+  },
+  {
+    "id": "68786",
+    "name": "OMEN By HP GT13-0006no -pöytäkone",
+    "details": "Se on pelirakkautta ensisilmäyksellä. OMEN 30L -pöytätietokone on näyttävä myös ominaisuuksiltaan. Tehokkaan prosessorin ja näytönohjaimen ansiosta voit aloittaa pelaamisen heti. Helppo päivitettävyys ja OMEN Command Center varmistavat, että siitä on iloa pitkään.",
+    "price": 2799.9,
+    "inventory": 10,
+    "imageUrl": "/product_pics/68786.jpeg"
+  },
+  {
+    "id": "34279",
+    "name": "Xiaomi 1C -johdoton imuri",
+    "details": "Kevytrakenteinen, tehokas ja johdoton Xiaomi Handheld Vacuum 1C -varsipölynimuri sopii niin pienten kuin isojenkin tilojen imurointiin. Irrotettavan varren ansiosta laite toimii myös kätevänä rikkaimurina pienroskien siivoamiseen. Kolmen eri tehoasetuksen, neljän eri suuttimen ja HEPA-suodattimen ansiosta varsi-imuri on tehokas koko kodin monipuolinen siivouslaite.",
+    "price": 159.0,
+    "inventory": 100,
+    "imageUrl": "/product_pics/34279.jpeg"
+  },
+  {
+    "id": "21001",
+    "name": "Apple MacBook Air 13” M1 256 Gt -kannettava",
+    "details": "Applen ohuin ja kevein kannettava. Moottorina supervahva M1-siru. 8-ytimisen prosessorin ansiosta projektit hoituvat salamannopeasti. 7-ytiminen näytönohjain vie grafiikoiltaan vaativat apit ja pelit täysin uusiin ulottuvuuksiin. Ja 16-ytiminen Neural Engine vauhdittaa koneoppimisen tehtäviä. Äänetön, tuulettimeton rakenne ja kaikkien aikojen pisin, jopa 18 tunnin akunkesto. MacBook Air. Helposti mukaan matkaan. Entistä tehokkaampana.",
+    "price": 1158.9,
+    "inventory": 20,
+    "imageUrl": "/product_pics/21001.jpeg"
+  },
+  {
+    "id": "52790",
+    "name": "Roborock S6 Max V -pölynimurirobotti",
+    "details": "Roborock S6 MaxV on älykäs, kahdella kameralla varustettu robottipölynimuri ja moppauslaite. Se imuroi ja pesee lattiat tarvittaessa yhtä aikaa. Kaksoiskamerat tuovat imurointiin edistyneitä ominaisuuksia ja mielenrauhaa. Jättimäisen vesisäiliön ansiosta se soveltuu erityisen hyvin paljaiden isojen lattia-alueiden siivoukseen. Automaattisesti toimiva robotti-imuri osaa itsenäisesti siivota lattiapinnat kiertäen huonekalut ja muut esteet. Se osaa myös hakeutua lataustelakkaansa ladatakseen itsensä tarvittaessa myös kesken siivouksen. Imurin HEPA-suodatin pitää poistoilman puhtaana.",
+    "price": 449.0,
+    "inventory": 15,
+    "imageUrl": "/product_pics/52790.jpeg"
+  }
+]
