@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import client from "../../app/client";
 
 export const fetchProducts = createAsyncThunk(
@@ -19,19 +19,18 @@ export const LoadingStatus = {
     success: 'success',
 }
 
+const entityAdapter = createEntityAdapter({
+    sortComparer: (a, b) => (a.id || 0) - (b.id || 0),
+});
+
 export const productsSlice = createSlice({
     name: 'products',
-    initialState: {
-        products: [],
+    initialState: entityAdapter.getInitialState({
         status: LoadingStatus.idle,
         error: null,
-    },
+    }),
     reducers: {
-        setAll: {
-            reducer: (state, action) => {
-                state.products = action.payload;
-            }
-        },
+        setAll: entityAdapter.setAll,
     },
     extraReducers: {
         [fetchProducts.pending]: state => {
@@ -39,7 +38,7 @@ export const productsSlice = createSlice({
         },
         [fetchProducts.fulfilled]: (state, action) => {
             state.status = LoadingStatus.success;
-            state.products = action.payload.products || [];
+            entityAdapter.setAll(state, action.payload.products || []);
             state.error = null;
         },
         [fetchProducts.rejected]: (state, action) => {
@@ -51,6 +50,8 @@ export const productsSlice = createSlice({
 
 export const {setAll} = productsSlice.actions;
 
-export const selectTopState = state => state[productsSlice.name];
+export const selectProductsSlice = state => state[productsSlice.name];
+
+export const productsSelectors = entityAdapter.getSelectors(state => selectProductsSlice(state));
 
 export default productsSlice.reducer;

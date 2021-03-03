@@ -1,13 +1,13 @@
 import {Loader, Message, Placeholder, Table} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchProducts, LoadingStatus, selectTopState} from "./productsSlice";
+import {fetchProducts, LoadingStatus, productsSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect} from "react";
 import {currency} from "../../app/numberFormats";
 
 const ProductList = () => {
-    const products = useSelector(state => selectTopState(state).products);
-    const loadingStatus = useSelector(state => selectTopState(state).status);
-    const error = useSelector(state => selectTopState(state).error);
+    const products = useSelector(state => productsSelectors.selectAll(state));
+    const loadingStatus = useSelector(state => selectProductsSlice(state).status);
+    const error = useSelector(state => selectProductsSlice(state).error);
     const dispatch = useDispatch();
 
     useEffect(() => {
