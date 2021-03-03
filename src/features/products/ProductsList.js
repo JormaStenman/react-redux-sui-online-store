@@ -1,4 +1,4 @@
-import {Loader, Message, Placeholder, Table} from "semantic-ui-react";
+import {Button, Container, Loader, Message, Table} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchProducts, LoadingStatus, productsSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect} from "react";
@@ -19,16 +19,14 @@ const ProductList = () => {
     switch (loadingStatus) {
         case LoadingStatus.loading:
             return (
-                <Placeholder>
-                    <Message content='loading products...'/>
-                    <Loader active/>
-                </Placeholder>
+                <Loader active content='loading products...'/>
             );
         case LoadingStatus.failed:
             return (
-                <Placeholder>
+                <Container>
                     <Message error content={error}/>
-                </Placeholder>
+                    <Button onClick={() => dispatch(fetchProducts())}>Retry</Button>
+                </Container>
             );
         default:
             return (
