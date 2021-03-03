@@ -1,8 +1,7 @@
 import {Container, Menu} from "semantic-ui-react";
 import {Link, useLocation} from "react-router-dom";
 
-// eslint-disable-next-line
-export default () => {
+export default function Navbar() {
     const location = useLocation();
 
     return (

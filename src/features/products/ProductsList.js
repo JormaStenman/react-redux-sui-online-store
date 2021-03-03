@@ -1,10 +1,10 @@
-import {Button, Container, Loader, Message, Table} from "semantic-ui-react";
+import {Button, Container, Loader, Message} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchProducts, LoadingStatus, productsSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect} from "react";
-import {currency} from "../../app/numberFormats";
+import ProductsTable from "./ProductsTable";
 
-const ProductList = () => {
+export default function ProductsList() {
     const products = useSelector(state => productsSelectors.selectAll(state));
     const loadingStatus = useSelector(state => selectProductsSlice(state).status);
     const error = useSelector(state => selectProductsSlice(state).error);
@@ -30,25 +30,7 @@ const ProductList = () => {
             );
         default:
             return (
-                <Table>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>Id</Table.HeaderCell>
-                            <Table.HeaderCell>Name</Table.HeaderCell>
-                            <Table.HeaderCell>Price</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {products.map(product => (
-                            <Table.Row key={product.id}>
-                                <Table.Cell>{product.id}</Table.Cell>
-                                <Table.Cell>{product.name}</Table.Cell>
-                                <Table.Cell>{currency.format(product.price || 0)}</Table.Cell>
-                            </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table>
+                <ProductsTable products={products}/>
             );
     }
-};
-export default ProductList;
+}

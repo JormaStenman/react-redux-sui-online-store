@@ -5,7 +5,7 @@ import {Container, Message} from "semantic-ui-react";
 import Navbar from "./features/navbar/Navbar";
 import {Redirect, Route, Switch} from "react-router-dom";
 
-function App() {
+export default function App() {
     return (
         <Container>
             <Navbar/>
@@ -25,5 +25,3 @@ function App() {
         </Container>
     );
 }
-
-export default App;
