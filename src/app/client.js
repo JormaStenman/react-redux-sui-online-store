@@ -1,5 +1,5 @@
 import products from '../data/products.json';
-import {random} from 'lodash'
+import {random} from 'lodash/number'
 
 const delay = 5000;
 const errorProb = 0.15;

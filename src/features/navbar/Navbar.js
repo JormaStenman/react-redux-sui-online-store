@@ -1,5 +1,5 @@
 import {Container, Menu} from "semantic-ui-react";
-import {useHistory, useLocation} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 
 export default function Navbar() {
     return (
@@ -13,14 +13,8 @@ export default function Navbar() {
 }
 
 function NavbarItem({path, children}) {
-    const history = useHistory();
-    const location = useLocation();
-
     return (
-        <Menu.Item
-            active={location.pathname === path}
-            onClick={() => history.replace(path)}
-        >
+        <Menu.Item as={NavLink} to={path} replace>
             {children}
         </Menu.Item>
     );

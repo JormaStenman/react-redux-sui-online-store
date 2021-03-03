@@ -52,6 +52,6 @@ export const {setAll} = productsSlice.actions;
 
 export const selectProductsSlice = state => state[productsSlice.name];
 
-export const productsSelectors = entityAdapter.getSelectors(state => selectProductsSlice(state));
+export const productSelectors = entityAdapter.getSelectors(state => selectProductsSlice(state));
 
 export default productsSlice.reducer;
