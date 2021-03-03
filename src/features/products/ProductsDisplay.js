@@ -2,9 +2,9 @@ import {Button, Container, Loader, Message} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchProducts, LoadingStatus, productsSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect} from "react";
-import ProductsTable from "./ProductsTable";
+import ProductItems from "./ProductItems";
 
-export default function ProductsList() {
+export default function ProductsDisplay() {
     const products = useSelector(state => productsSelectors.selectAll(state));
     const loadingStatus = useSelector(state => selectProductsSlice(state).status);
     const error = useSelector(state => selectProductsSlice(state).error);
@@ -30,7 +30,7 @@ export default function ProductsList() {
             );
         default:
             return (
-                <ProductsTable products={products}/>
+                <ProductItems products={products}/>
             );
     }
 }

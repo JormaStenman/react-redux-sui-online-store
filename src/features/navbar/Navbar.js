@@ -1,19 +1,27 @@
 import {Container, Menu} from "semantic-ui-react";
-import {Link, useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 
 export default function Navbar() {
+    return (
+        <Container>
+            <Menu stackable>
+                <NavbarItem path='/main'>Main</NavbarItem>
+                <NavbarItem path='/products'>Products</NavbarItem>
+            </Menu>
+        </Container>
+    );
+}
+
+function NavbarItem({path, children}) {
+    const history = useHistory();
     const location = useLocation();
 
     return (
-        <Container>
-            <Menu>
-                <Menu.Item active={location.pathname === '/main'}>
-                    <Link to='/main'>Main</Link>
-                </Menu.Item>
-                <Menu.Item active={location.pathname === '/products'}>
-                    <Link to='/products'>Products</Link>
-                </Menu.Item>
-            </Menu>
-        </Container>
+        <Menu.Item
+            active={location.pathname === path}
+            onClick={() => history.replace(path)}
+        >
+            {children}
+        </Menu.Item>
     );
 }

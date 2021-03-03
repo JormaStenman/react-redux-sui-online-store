@@ -20,7 +20,7 @@ export const LoadingStatus = {
 }
 
 const entityAdapter = createEntityAdapter({
-    sortComparer: (a, b) => (a.id || 0) - (b.id || 0),
+    sortComparer: (a, b) => (a.name || '').localeCompare((b.name || '')),
 });
 
 export const productsSlice = createSlice({

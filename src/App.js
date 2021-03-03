@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import ProductsList from "./features/products/ProductsList";
+import ProductsDisplay from "./features/products/ProductsDisplay";
 import {Container, Message} from "semantic-ui-react";
 import Navbar from "./features/navbar/Navbar";
 import {Redirect, Route, Switch} from "react-router-dom";
@@ -16,7 +16,7 @@ export default function App() {
                     </Container>
                 </Route>
                 <Route path='/products'>
-                    <ProductsList/>
+                    <ProductsDisplay/>
                 </Route>
                 <Route path='/'>
                     <Redirect to='/main'/>
