@@ -1,7 +1,6 @@
 import products from '../data/products.json';
 import {random} from 'lodash/number'
 
-const delay = 5000;
 const errorProb = 0.15;
 
 function getError() {
@@ -12,24 +11,40 @@ function getError() {
     return null;
 }
 
-export const getAllProducts = () => {
+function promiseToReturn(makeResult, maxDelay) {
     return new Promise((resolve, reject) => {
             setTimeout(() => {
                     const error = getError();
                     if (error) {
                         reject(new Error(error))
                     } else {
-                        resolve({products});
+                        let result;
+                        try {
+                            result = makeResult();
+                        } catch (e) {
+                            reject(e);
+                        }
+                        resolve(result);
                     }
                 },
-                random(delay)
+                random(maxDelay)
             );
         }
     );
 }
 
+export const getAllProducts = () => {
+    return promiseToReturn(() => ({products}), 5000);
+}
+
 export const getProductById = productId => {
-    return {product: products.find(product => product.id === productId)};
+    return promiseToReturn(() => {
+        const product = products.find(product => product.id === productId);
+        if (!product) {
+            throw new Error(`No product found matching id ${productId}.`);
+        }
+        return {product};
+    }, 1000);
 }
 
 const client = {

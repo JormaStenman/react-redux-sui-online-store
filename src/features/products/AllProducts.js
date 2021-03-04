@@ -1,11 +1,13 @@
 import {useDispatch, useSelector} from "react-redux";
 import {fetchProducts, LoadingStatus, productSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect} from "react";
-import ProductsLoadError from "./ProductsLoadError";
-import ProductsLoading from "./ProductsLoading";
+import Loading from "../loading/Loading";
+import ProductItems from "./ProductItems";
+import {Message} from "semantic-ui-react";
 
-export default function WithProducts({render}) {
+export default function AllProducts() {
     const loadingStatus = useSelector(state => selectProductsSlice(state).status);
+    const loadingError = useSelector(state => selectProductsSlice(state).error);
     const dispatch = useDispatch();
     const products = useSelector(state => productSelectors.selectAll(state));
 
@@ -17,14 +19,10 @@ export default function WithProducts({render}) {
 
     switch (loadingStatus) {
         case LoadingStatus.loading:
-            return (
-                <ProductsLoading/>
-            );
+            return <Loading what='products'/>;
         case LoadingStatus.failed:
-            return (
-                <ProductsLoadError/>
-            );
+            return <Message error content={loadingError}/>
         default:
-            return render(products);
+            return <ProductItems products={products}/>
     }
 }
