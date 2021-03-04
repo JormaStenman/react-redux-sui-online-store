@@ -12,7 +12,7 @@ function getError() {
     return null;
 }
 
-const getAllProducts = () => {
+export const getAllProducts = () => {
     return new Promise((resolve, reject) => {
             setTimeout(() => {
                     const error = getError();
@@ -28,8 +28,13 @@ const getAllProducts = () => {
     );
 }
 
+export const getProductById = productId => {
+    return {product: products.find(product => product.id === productId)};
+}
+
 const client = {
     getAllProducts,
+    getProductById,
 };
 
 export default client;
