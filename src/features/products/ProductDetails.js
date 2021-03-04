@@ -7,6 +7,7 @@ import {LoadingStatus, productSelectors, selectProductsSlice} from "./productsSl
 
 export default function ProductDetails() {
     const match = useRouteMatch();
+    // noinspection JSUnresolvedVariable
     const productId = match.params.productId;
     const product = useSelector(state => productSelectors.selectById(state, parseInt(productId)));
     const loadingStatus = useSelector(state => selectProductsSlice(state).status);
