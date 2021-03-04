@@ -1,20 +1,23 @@
 import {Container, Menu} from "semantic-ui-react";
-import {NavLink} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 
-export default function Navbar() {
-    return (
-        <Container>
-            <Menu stackable>
-                <NavbarItem path='/main'>Main</NavbarItem>
-                <NavbarItem path='/products'>Products</NavbarItem>
-            </Menu>
-        </Container>
-    );
-}
+// eslint-disable-next-line import/no-anonymous-default-export
+export default () => (
+    <Container>
+        <Menu stackable borderless>
+            <NavbarItem path='/main'>Main</NavbarItem>
+            <NavbarItem path='/products'>Products</NavbarItem>
+            <Menu.Menu position='right'>
+                <NavbarItem path='/cart'>Shopping cart</NavbarItem>
+            </Menu.Menu>
+        </Menu>
+    </Container>
+)
 
 function NavbarItem({path, children}) {
+    const location = useLocation();
     return (
-        <Menu.Item as={NavLink} to={path} replace>
+        <Menu.Item active={location.pathname === path} as={Link} to={path} replace>
             {children}
         </Menu.Item>
     );

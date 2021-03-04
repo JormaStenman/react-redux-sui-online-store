@@ -7,6 +7,7 @@ import {Redirect, Route, Switch} from "react-router-dom";
 import MainContent from "./features/main/MainContent";
 import ProductDetails from "./features/products/ProductDetails";
 import ProductItems from "./features/products/ProductItems";
+import Cart from "./features/cart/Cart";
 
 export default function App() {
     return (
@@ -14,6 +15,9 @@ export default function App() {
             <Navbar/>
             <LoadProducts/>
             <Switch>
+                <Route path='/cart'>
+                    <Cart/>
+                </Route>
                 <Route path='/main'>
                     <MainContent/>
                 </Route>
