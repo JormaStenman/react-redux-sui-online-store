@@ -3,8 +3,12 @@ import {currency} from "../../app/numberFormats";
 import {truncate} from "lodash/string";
 import {Link} from "react-router-dom";
 import {productImageSrc} from "../../app/productUtils";
+import {useSelector} from "react-redux";
+import {productSelectors} from "./productsSlice";
 
-export default function ProductItems({products}) {
+export default function ProductItems() {
+
+    const products = useSelector(state => productSelectors.selectAll(state));
 
     function itemLoc(currentLoc, productId) {
         return {

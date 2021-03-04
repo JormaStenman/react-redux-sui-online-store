@@ -2,10 +2,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchProducts, LoadingStatus, productSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect} from "react";
 import Loading from "../loading/Loading";
-import ProductItems from "./ProductItems";
 import {Message} from "semantic-ui-react";
 
-export default function AllProducts() {
+export default function LoadProducts() {
     const loadingStatus = useSelector(state => selectProductsSlice(state).status);
     const loadingError = useSelector(state => selectProductsSlice(state).error);
     const dispatch = useDispatch();
@@ -15,14 +14,19 @@ export default function AllProducts() {
         if ((!products || !products.length) && loadingStatus === LoadingStatus.idle) {
             dispatch(fetchProducts());
         }
-    }, [products, loadingStatus, dispatch]);
+    });
 
     switch (loadingStatus) {
         case LoadingStatus.loading:
             return <Loading what='products'/>;
         case LoadingStatus.failed:
-            return <Message error content={loadingError}/>
+            return (
+                <Message error>
+                    <p>Error while loading products: {loadingError}</p>
+                    <p>Try refreshing the page.</p>
+                </Message>
+            );
         default:
-            return <ProductItems products={products}/>
+            return null;
     }
 }
