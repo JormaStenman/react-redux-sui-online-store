@@ -1,4 +1,4 @@
-import {Item} from "semantic-ui-react";
+import {Button, Item} from "semantic-ui-react";
 import {currency} from "../../app/numberFormats";
 import {truncate} from "lodash/string";
 import {Link} from "react-router-dom";
@@ -30,6 +30,9 @@ export default function ProductList() {
                         <Item.Description>
                             {truncate(product.details, {length: 200})}
                         </Item.Description>
+                        <Item.Extra>
+                            <Button>Select</Button>
+                        </Item.Extra>
                     </Item.Content>
                 </Item>
             ))}
