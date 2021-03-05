@@ -6,7 +6,7 @@ import Navbar from "./features/navbar/Navbar";
 import {Redirect, Route, Switch} from "react-router-dom";
 import MainContent from "./features/main/MainContent";
 import ProductDetails from "./features/products/ProductDetails";
-import ProductItems from "./features/products/ProductItems";
+import ProductList from "./features/products/ProductList";
 import Cart from "./features/cart/Cart";
 
 export default function App() {
@@ -25,7 +25,7 @@ export default function App() {
                     <ProductDetails/>
                 </Route>
                 <Route path='/products'>
-                    <ProductItems/>
+                    <ProductList/>
                 </Route>
                 <Route path='/'>
                     <Redirect to='/main'/>

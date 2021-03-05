@@ -6,7 +6,7 @@ import {productImageSrc} from "../../app/productUtils";
 import {useSelector} from "react-redux";
 import {productSelectors} from "./productsSlice";
 
-export default function ProductItems() {
+export default function ProductList() {
 
     const products = useSelector(state => productSelectors.selectAll(state));
 
