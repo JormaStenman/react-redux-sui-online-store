@@ -4,7 +4,7 @@ import {productImageSrc} from "../../app/productUtils";
 import {currency} from "../../app/numberFormats";
 import {useDispatch, useSelector} from "react-redux";
 import {LoadingStatus, productSelectors, selectProductsSlice} from "./productsSlice";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {addToCart} from "../cart/cartSlice";
 
 export default function ProductDetails() {
@@ -22,15 +22,21 @@ export default function ProductDetails() {
     }
 
     function AddModal({product}) {
-        const [timeoutID] = useState(setTimeout(() => setAddModalOpen(false), 5000));
+        useEffect(() => {
+            const timeoutID = setTimeout(() => setAddModalOpen(false), 5000);
+            return () => clearTimeout(timeoutID);
+        });
+
         return (
             <Modal open closeIcon onClose={() => {
-                clearTimeout(timeoutID);
                 setAddModalOpen(false);
             }}>
                 <Modal.Header>
                     One <i><u>{product.name}</u></i> added in <Link to='/cart'>cart</Link>.
                 </Modal.Header>
+                <Modal.Content>
+                    <Image size='tiny' inline src={productImageSrc(product.id)}/>
+                </Modal.Content>
             </Modal>
         );
     }
