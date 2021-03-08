@@ -1,39 +1,40 @@
-// eslint-disable-next-line import/no-anonymous-default-export
-import {Button, Message, Table} from "semantic-ui-react";
-import {useDispatch, useSelector} from "react-redux";
-import {deleteOrder, orderSelectors} from "./ordersSlice";
-import {productSelectors, updateProduct} from "../products/productsSlice";
+import {Message, Table} from "semantic-ui-react";
+import {useSelector} from "react-redux";
+import {orderSelectors, OrderStatus} from "./ordersSlice";
+import {Link, useLocation} from "react-router-dom";
+import {productSelectors} from "../products/productsSlice";
+import {truncate} from "lodash/string";
 
 function OrderRow({order}) {
-    const dispatch = useDispatch();
-    const products = useSelector(state => productSelectors.selectEntities(state));
+    const location = useLocation();
+    const productsById = useSelector(state => productSelectors.selectEntities(state));
 
-    function reStock(order) {
-        Object.keys(order.products).forEach(productId => {
-            const product = products[productId];
-            const quantity = (order.products)[productId].quantity;
-            const remaining = product.inventory + quantity;
-            dispatch(updateProduct({
-                id: parseInt(productId),
-                changes: {
-                    inventory: remaining,
-                }
-            }));
-        });
+    function productNamesInOrder(order) {
+        return Object.keys(order.products).map(productId => truncate(productsById[parseInt(productId)].name, {length: 20}));
     }
 
-    function handleCancel(order) {
-        dispatch(deleteOrder(order.id));
-        reStock(order);
+    function statusToText(orderStatus) {
+        switch (orderStatus) {
+            case OrderStatus.ordered:
+                return 'ordered';
+            case OrderStatus.waitingForProducts:
+                return 'waiting for products';
+            default:
+                return '';
+        }
     }
+
+    const orderUrl = `${location.pathname}/${order.id}`;
 
     return (
-        <Table.Row key={order.id}>
-            <Table.Cell>{order.id}</Table.Cell>
+        <Table.Row>
             <Table.Cell>{order.date}</Table.Cell>
-            <Table.Cell>{order.status}</Table.Cell>
+            <Table.Cell>{statusToText(order.status)}</Table.Cell>
             <Table.Cell>
-                <Button icon='trash alternate' negative onClick={() => handleCancel(order)} content='Cancel'/>
+                <Link to={orderUrl}>{order.id}</Link>
+            </Table.Cell>
+            <Table.Cell>
+                {productNamesInOrder(order).join(', ')}
             </Table.Cell>
         </Table.Row>
     );
@@ -46,13 +47,13 @@ export default () => {
     if (orders.length) {
         return (
             <>
-                <Table striped columns={4}>
+                <Table striped>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell>ID</Table.HeaderCell>
-                            <Table.HeaderCell>Date</Table.HeaderCell>
-                            <Table.HeaderCell>Status</Table.HeaderCell>
-                            <Table.HeaderCell>Actions</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Date</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Status</Table.HeaderCell>
+                            <Table.HeaderCell width={6}>ID</Table.HeaderCell>
+                            <Table.HeaderCell width={6}>Contents</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>

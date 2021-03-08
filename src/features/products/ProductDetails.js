@@ -72,7 +72,7 @@ export default function ProductDetails() {
                     render={() => (
                         <>
                             <Modal.Header>
-                                One of <i>{product.name}</i> added in <Link to='/cart'>cart</Link>.
+                                One of <i>{product.name}</i> added in <Link to='/cart' replace>cart</Link>.
                             </Modal.Header>
                             <Modal.Content>
                                 <Image size='tiny' inline src={productImageSrc(product.id)}/>

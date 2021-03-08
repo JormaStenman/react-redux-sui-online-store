@@ -11,6 +11,7 @@ import Orders from "./features/orders/Orders";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchProducts, productSelectors} from "./features/products/productsSlice";
 import {fetchOrders, orderSelectors} from "./features/orders/ordersSlice";
+import OrderDetails from "./features/orders/OrderDetails";
 
 export default function App() {
     const dispatch = useDispatch();
@@ -31,6 +32,9 @@ export default function App() {
         <Container>
             <Navbar/>
             <Switch>
+                <Route path='/orders/:orderId'>
+                    <OrderDetails/>
+                </Route>
                 <Route path='/orders'>
                     <Orders/>
                 </Route>

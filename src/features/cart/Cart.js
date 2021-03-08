@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-anonymous-default-export
-import {Button, Input, Modal, Table} from "semantic-ui-react";
+import {Button, Input, Modal, Segment, Table} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
 import {emptyCart, selectCartSlice, setQuantity} from "./cartSlice";
 import {productSelectors, updateProduct} from "../products/productsSlice";
@@ -153,8 +152,14 @@ export default () => {
                             Thank you for your order!
                         </Modal.Header>
                         <Modal.Content>
-                            Your order id is <b>{latestOrder ? latestOrder.id : ''}</b>.
-                            You can view your orders on the <Link to='/orders'>Orders page</Link>
+                            <Segment.Group>
+                                <Segment.Inline>
+                                    {latestOrder && <Link to={`/orders/${latestOrder.id}`} replace>View your order.</Link>}
+                                </Segment.Inline>
+                                <Segment.Inline>
+                                    You can view all your orders on the <Link to='/orders' replace>Orders page</Link>
+                                </Segment.Inline>
+                            </Segment.Group>
                         </Modal.Content>
                     </>
                 )}
