@@ -50,6 +50,11 @@ export default function ProductDetails() {
                                         {product.details}
                                     </Card.Description>
                                 </Card.Content>
+                                <Card.Content extra>
+                                    <Card.Meta>
+                                        <span>In stock: {product.inventory}</span>
+                                    </Card.Meta>
+                                </Card.Content>
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>

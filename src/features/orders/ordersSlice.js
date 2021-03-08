@@ -38,6 +38,7 @@ export const ordersSlice = createSlice({
                     ...userPayload,
                     id: uuid(),
                     date: new Date().toISOString().substr(0, 10),
+                    createdAt: Date.now(),
                 }
             }),
         },
@@ -64,5 +65,11 @@ export const {addOrder, deleteOrder} = ordersSlice.actions;
 export const selectOrdersSlice = state => state[ordersSlice.name];
 
 export const orderSelectors = entityAdapter.getSelectors(state => selectOrdersSlice(state));
+
+export const selectLatestOrder = state => {
+    const sorted = orderSelectors.selectAll(state)
+        .sort((a, b) => b.createdAt - a.createdAt);
+    return sorted && sorted.length ? sorted[0] : undefined;
+};
 
 export default ordersSlice.reducer;

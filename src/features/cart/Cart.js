@@ -1,11 +1,13 @@
 // eslint-disable-next-line import/no-anonymous-default-export
-import {Button, Input, Table} from "semantic-ui-react";
+import {Button, Input, Modal, Table} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
 import {emptyCart, selectCartSlice, setQuantity} from "./cartSlice";
 import {productSelectors, updateProduct} from "../products/productsSlice";
 import {currency} from "../../app/numberFormats";
 import {Link} from "react-router-dom";
-import {addOrder, OrderStatus} from "../orders/ordersSlice";
+import {addOrder, OrderStatus, selectLatestOrder} from "../orders/ordersSlice";
+import {useState} from "react";
+import StoreModal from "../modal/StoreModal";
 
 function ProductRow({productId}) {
     const product = useSelector(state => productSelectors.selectById(state, parseInt(productId)));
@@ -56,6 +58,8 @@ export default () => {
     const cart = useSelector(state => selectCartSlice(state));
     const dispatch = useDispatch();
     const products = useSelector(state => productSelectors.selectEntities(state));
+    const [orderModalOpen, setOrderModalOpen] = useState(false);
+    const latestOrder = useSelector(state => selectLatestOrder(state));
 
     function createOrder() {
         return Object.keys(cart).reduce((order, productId) => {
@@ -86,6 +90,7 @@ export default () => {
     function handlePlaceOrder() {
         dispatch(addOrder(createOrder()));
         dispatch(emptyCart());
+        setOrderModalOpen(true);
     }
 
     return (
@@ -134,6 +139,21 @@ export default () => {
                     primary
                 />
             </Button.Group>
+            <StoreModal
+                modalOpen={orderModalOpen}
+                setModalOpen={setOrderModalOpen}
+                render={() => (
+                    <>
+                        <Modal.Header>
+                            Thank you for your order!
+                        </Modal.Header>
+                        <Modal.Content>
+                            Your order id is <b>{latestOrder ? latestOrder.id : ''}</b>.
+                            You can view your orders on the <Link to='/orders'>Orders page</Link>
+                        </Modal.Content>
+                    </>
+                )}
+            />
         </>
     );
 }
