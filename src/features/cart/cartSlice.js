@@ -24,4 +24,6 @@ export const {addToCart, emptyCart, setQuantity,} = cartSlice.actions;
 
 export const selectCartSlice = state => state[cartSlice.name];
 
+export const selectNumberOfItemsInCart = state => Object.keys(selectCartSlice(state)).length;
+
 export default cartSlice.reducer;
