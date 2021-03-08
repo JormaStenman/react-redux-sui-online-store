@@ -4,30 +4,10 @@ import {productImageSrc} from "../../app/productUtils";
 import {currency} from "../../app/numberFormats";
 import {useDispatch, useSelector} from "react-redux";
 import {productSelectors, selectProductsSlice} from "./productsSlice";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {addToCart} from "../cart/cartSlice";
 import LoadingStatus from "../../app/LoadingStatus";
-
-function AddModal({product, addModalOpen, setAddModalOpen}) {
-
-    useEffect(() => {
-        const timeoutID = setTimeout(() => setAddModalOpen(false), 5000);
-        return () => clearTimeout(timeoutID);
-    });
-
-    return (
-        <Modal open={addModalOpen} closeIcon onClose={() => {
-            setAddModalOpen(false);
-        }}>
-            <Modal.Header>
-                One of <i>{product.name}</i> added in <Link to='/cart'>cart</Link>.
-            </Modal.Header>
-            <Modal.Content>
-                <Image size='tiny' inline src={productImageSrc(product.id)}/>
-            </Modal.Content>
-        </Modal>
-    );
-}
+import StoreModal from "../modal/StoreModal";
 
 export default function ProductDetails() {
     const match = useRouteMatch();
@@ -74,11 +54,27 @@ export default function ProductDetails() {
                         </Grid.Row>
                     </Grid>
                     <Button.Group>
-                        <Button icon='arrow alternate circle left outline' content='See more products' as={Link} to='/products'/>
-                        <Button primary icon='add to cart' content='Add to cart' onClick={() => handleAddClick(productId)}/>
+                        <Button icon='arrow alternate circle left outline' content='See more products' as={Link}
+                                to='/products'/>
+                        <Button primary icon='add to cart' content='Add to cart'
+                                onClick={() => handleAddClick(productId)}/>
                     </Button.Group>
                 </Card>
-                <AddModal product={product} addModalOpen={addModalOpen} setAddModalOpen={setAddModalOpen}/>
+                <StoreModal
+                    modalOpen={addModalOpen}
+                    setModalOpen={setAddModalOpen}
+                    timeout={5000}
+                    render={() => (
+                        <>
+                            <Modal.Header>
+                                One of <i>{product.name}</i> added in <Link to='/cart'>cart</Link>.
+                            </Modal.Header>
+                            <Modal.Content>
+                                <Image size='tiny' inline src={productImageSrc(product.id)}/>
+                            </Modal.Content>
+                        </>
+                    )}
+                />
             </Container>
         );
     } else {
