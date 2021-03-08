@@ -1,7 +1,9 @@
 import products from '../data/products.json';
 import {random} from 'lodash/number'
 
-const errorProb = 0.15;
+const errorProb = 0.00;
+
+const ordersById = {};
 
 function getError() {
     if (random(1, true) <= errorProb) {
@@ -34,7 +36,7 @@ function promiseToReturn(makeResult, maxDelay) {
 }
 
 export const getAllProducts = () => {
-    return promiseToReturn(() => ({products}), 5000);
+    return promiseToReturn(() => ({products}), 0);
 }
 
 export const getProductById = productId => {
@@ -44,12 +46,18 @@ export const getProductById = productId => {
             throw new Error(`No product found matching id ${productId}.`);
         }
         return {product};
-    }, 1000);
+    }, 0);
 }
+
+export const getAllOrders = () => {
+    return promiseToReturn(() => ({orders: Object.values(ordersById)}), 0);
+}
+
 
 const client = {
     getAllProducts,
     getProductById,
+    getAllOrders,
 };
 
 export default client;

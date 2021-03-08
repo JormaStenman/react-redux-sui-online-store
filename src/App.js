@@ -1,6 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
-import LoadProducts from "./features/products/LoadProducts";
 import {Container} from "semantic-ui-react";
 import Navbar from "./features/navbar/Navbar";
 import {Redirect, Route, Switch} from "react-router-dom";
@@ -8,13 +7,33 @@ import MainContent from "./features/main/MainContent";
 import ProductDetails from "./features/products/ProductDetails";
 import ProductList from "./features/products/ProductList";
 import Cart from "./features/cart/Cart";
+import Orders from "./features/orders/Orders";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchProducts, productSelectors} from "./features/products/productsSlice";
+import {fetchOrders, orderSelectors} from "./features/orders/ordersSlice";
 
 export default function App() {
+    const dispatch = useDispatch();
+    const products = useSelector(state => productSelectors.selectAll(state));
+    const orders = useSelector(state => orderSelectors.selectAll(state));
+
+    useEffect(() => {
+        if (!products || !products.length) {
+            dispatch(fetchProducts());
+        }
+        if (!orders || !orders.length) {
+            dispatch(fetchOrders());
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     return (
         <Container>
             <Navbar/>
-            <LoadProducts/>
             <Switch>
+                <Route path='/orders'>
+                    <Orders/>
+                </Route>
                 <Route path='/cart'>
                     <Cart/>
                 </Route>

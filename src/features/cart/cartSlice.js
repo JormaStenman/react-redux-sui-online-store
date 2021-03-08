@@ -9,19 +9,18 @@ export const cartSlice = createSlice({
             state[productId] |= 0;
             state[productId]++;
         },
-        removeFromCart: (state, action) => {
-            const productId = action.payload;
-            state[productId] |= 0;
-            state[productId]--;
-            if (state[productId] < 0) {
-                state[productId] = 0;
+        setQuantity: (state, action) => {
+            const {productId, newQuantity} = action.payload;
+            state[productId] = newQuantity;
+            if (state[productId] <= 0) {
+                delete state[productId];
             }
         },
         emptyCart: _ => ({}),
     },
 });
 
-export const {addToCart, removeFromCart, emptyCart} = cartSlice.actions;
+export const {addToCart, emptyCart, setQuantity,} = cartSlice.actions;
 
 export const selectCartSlice = state => state[cartSlice.name];
 

@@ -1,8 +1,9 @@
 import {useDispatch, useSelector} from "react-redux";
-import {fetchProducts, LoadingStatus, productSelectors, selectProductsSlice} from "./productsSlice";
+import {fetchProducts, productSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect} from "react";
 import Loading from "../loading/Loading";
 import {Message} from "semantic-ui-react";
+import LoadingStatus from "../../app/LoadingStatus";
 
 export default function LoadProducts() {
     const loadingStatus = useSelector(state => selectProductsSlice(state).status);

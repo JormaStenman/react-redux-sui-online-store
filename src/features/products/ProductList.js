@@ -6,7 +6,8 @@ import {productImageSrc} from "../../app/productUtils";
 import {useSelector} from "react-redux";
 import {productSelectors} from "./productsSlice";
 
-export default function ProductList() {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default () => {
 
     const products = useSelector(state => productSelectors.selectAll(state));
 

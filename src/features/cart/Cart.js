@@ -1,11 +1,139 @@
 // eslint-disable-next-line import/no-anonymous-default-export
-import {Container, Message} from "semantic-ui-react";
+import {Button, Input, Table} from "semantic-ui-react";
+import {useDispatch, useSelector} from "react-redux";
+import {emptyCart, selectCartSlice, setQuantity} from "./cartSlice";
+import {productSelectors, updateProduct} from "../products/productsSlice";
+import {currency} from "../../app/numberFormats";
+import {Link} from "react-router-dom";
+import {addOrder, OrderStatus} from "../orders/ordersSlice";
+
+function ProductRow({productId}) {
+    const product = useSelector(state => productSelectors.selectById(state, parseInt(productId)));
+    const quantity = useSelector(state => selectCartSlice(state)[product.id]);
+    const dispatch = useDispatch();
+
+    function handleQuantityChange(evt) {
+        const newQuantity = parseInt(evt.target.value);
+        dispatch(setQuantity({productId: product.id, newQuantity}));
+    }
+
+    if (product) {
+        // noinspection JSUnresolvedVariable
+        return (
+            <Table.Row>
+                <Table.Cell><Link to={`/products/${product.id}`}>{product.id}</Link></Table.Cell>
+                <Table.Cell>{product.name}</Table.Cell>
+                <Table.Cell>{currency.format(product.price || 0)}</Table.Cell>
+                <Table.Cell>
+                    <Input
+                        fluid
+                        type='number'
+                        min={0}
+                        max={product.inventory}
+                        defaultValue={quantity}
+                        onChange={handleQuantityChange}
+                    />
+                </Table.Cell>
+            </Table.Row>
+        );
+    }
+    return null;
+}
+
+function CartTotal() {
+    const cart = useSelector(state => selectCartSlice(state));
+    const products = useSelector(state => productSelectors.selectEntities(state));
+    const cartTotal = Object.keys(cart).reduce(
+        (total, productId) => total + cart[productId] * products[parseInt(productId)].price, 0.0
+    );
+    return (
+        <span>Cart total:&nbsp;<strong>{currency.format(cartTotal)}</strong></span>
+    );
+}
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default () => {
+    const cart = useSelector(state => selectCartSlice(state));
+    const dispatch = useDispatch();
+    const products = useSelector(state => productSelectors.selectEntities(state));
+
+    function createOrder() {
+        return Object.keys(cart).reduce((order, productId) => {
+            const product = products[productId];
+            const quantity = cart[productId];
+            // noinspection JSUnresolvedVariable
+            const remaining = product.inventory - quantity;
+            if (!order.products[productId]) {
+                order.products[productId] = {
+                    unitPrice: product.price,
+                    quantity,
+                };
+            }
+            if (order.status !== OrderStatus.waitingForProducts) {
+                // any product not in stock will set order status to 'waiting for products'
+                order.status = remaining < 0 ? OrderStatus.waitingForProducts : OrderStatus.ordered;
+            }
+            dispatch(updateProduct({
+                id: parseInt(productId),
+                changes: {
+                    inventory: remaining,
+                }
+            }));
+            return order;
+        }, {products: {}});
+    }
+
+    function handlePlaceOrder() {
+        dispatch(addOrder(createOrder()));
+        dispatch(emptyCart());
+    }
+
     return (
-        <Container>
-            <Message>Shopping cart goes here.</Message>
-        </Container>
+        <>
+            <Table striped>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell width='1'>ID</Table.HeaderCell>
+                        <Table.HeaderCell width='11'>Name</Table.HeaderCell>
+                        <Table.HeaderCell width='3'>Unit Price</Table.HeaderCell>
+                        <Table.HeaderCell width='1'>Quantity</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {Object.keys(cart).map(productId => (
+                        <ProductRow key={productId} productId={productId}/>
+                    ))}
+                </Table.Body>
+                <Table.Footer>
+                    <Table.Row>
+                        <Table.HeaderCell colSpan='4'>
+                            <CartTotal/>
+                        </Table.HeaderCell>
+                    </Table.Row>
+                </Table.Footer>
+            </Table>
+            <Button.Group>
+                <Button
+                    as={Link}
+                    content='See more products'
+                    icon='arrow alternate circle left outline'
+                    to='/products'
+                />
+                <Button
+                    content='Cancel order'
+                    disabled={Object.keys(cart).length === 0}
+                    icon='trash alternate'
+                    negative
+                    onClick={() => dispatch(emptyCart())}
+                />
+                <Button
+                    content='Place order'
+                    disabled={Object.keys(cart).length === 0}
+                    icon='share square'
+                    onClick={handlePlaceOrder}
+                    primary
+                />
+            </Button.Group>
+        </>
     );
 }

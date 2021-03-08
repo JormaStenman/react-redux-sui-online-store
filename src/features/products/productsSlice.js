@@ -1,5 +1,6 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import client from "../../app/client";
+import LoadingStatus from "../../app/LoadingStatus";
 
 export const fetchProducts = createAsyncThunk(
     'products/fetchProducts',
@@ -12,17 +13,11 @@ export const fetchProducts = createAsyncThunk(
     }
 );
 
-export const LoadingStatus = {
-    failed: 'failed',
-    idle: 'idle',
-    loading: 'loading',
-    success: 'success',
-}
-
 const entityAdapter = createEntityAdapter({
     sortComparer: (a, b) => (a.name || '').localeCompare((b.name || '')),
 });
 
+// noinspection DuplicatedCode
 export const productsSlice = createSlice({
     name: 'products',
     initialState: entityAdapter.getInitialState({
@@ -31,6 +26,7 @@ export const productsSlice = createSlice({
     }),
     reducers: {
         setAll: entityAdapter.setAll,
+        updateProduct: entityAdapter.updateOne,
     },
     extraReducers: {
         [fetchProducts.pending]: state => {
@@ -48,7 +44,7 @@ export const productsSlice = createSlice({
     },
 });
 
-export const {setAll} = productsSlice.actions;
+export const {setAll, updateProduct} = productsSlice.actions;
 
 export const selectProductsSlice = state => state[productsSlice.name];
 
