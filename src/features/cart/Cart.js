@@ -29,8 +29,13 @@ function ProductRow({productId}) {
                 <Table.Cell>
                     <Input
                         fluid
+                        label={<Button
+                            icon='remove'
+                            onClick={() => handleQuantityChange({target: {value: 0}})}
+                            title='remove'
+                        />}
                         type='number'
-                        min={0}
+                        min={1}
                         max={product.inventory}
                         defaultValue={quantity}
                         onChange={handleQuantityChange}
@@ -99,9 +104,9 @@ export default () => {
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell width='1'>ID</Table.HeaderCell>
-                        <Table.HeaderCell width='11'>Name</Table.HeaderCell>
+                        <Table.HeaderCell width='10'>Name</Table.HeaderCell>
                         <Table.HeaderCell width='3'>Unit Price</Table.HeaderCell>
-                        <Table.HeaderCell width='1'>Quantity</Table.HeaderCell>
+                        <Table.HeaderCell width='2'>Quantity</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
