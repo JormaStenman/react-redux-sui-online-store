@@ -1,22 +1,46 @@
 import {Link, useHistory, useRouteMatch} from "react-router-dom";
-import {useDispatch} from "react-redux";
-import {cancelOrder, getOrderById} from "./ordersSlice";
-import {Button, Grid, Image, Message, Table} from "semantic-ui-react";
-import {fetchProductsByIds, updateProduct} from "../products/productsSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {cancelOrder, fetchAllOrders, orderSelectors, selectOrdersSlice} from "./ordersSlice";
+import {Button, Grid, Image, Message, Placeholder, Table} from "semantic-ui-react";
+import {fetchAllProducts, productSelectors, modifyInventory, selectProductsSlice} from "../products/productsSlice";
 import {productImageSrc} from "../../app/productUtils";
 import {currency} from "../../app/numberFormats";
-import {useEffect, useRef, useState} from "react";
-import {unwrapResult} from "@reduxjs/toolkit";
+import {useEffect, useRef} from "react";
 import Loading from "../loading/Loading";
 
-function OrderProductRow({order, products, productId}) {
+function OrderProductRow({order, productId}) {
+    const dispatch = useDispatch();
+    const product = useSelector(state => productSelectors.selectById(state, productId));
+    const loading = useSelector(state => selectProductsSlice(state).loading);
+    const loadError = useSelector(state => selectProductsSlice(state).error);
+
+    useEffect(() => {
+        dispatch(fetchAllProducts());
+    });
+
+    function productName() {
+        if (loading) {
+            return (
+                <Placeholder fluid>
+                    <Placeholder.Line/>
+                </Placeholder>
+            );
+        }
+        if (loadError) {
+            return <Message error content={loadError}/>
+        }
+        if (product) {
+            return product.name;
+        }
+    }
+
     return (
         <Table.Row>
             <Table.Cell>
                 <Link to={`/products/${productId}`}>
                     <Image size='tiny' inline src={productImageSrc(productId)}/>
                     &nbsp;
-                    {products[productId].name}
+                    {productName()}
                 </Link>
             </Table.Cell>
             <Table.Cell>{order.products[productId].quantity}</Table.Cell>
@@ -32,114 +56,39 @@ export default () => {
     const dispatch = useDispatch();
     const match = useRouteMatch();
     const history = useHistory();
-    const [order, setOrder] = useState(null);
-    const [products, setProducts] = useState(null);
-    const [loading, setLoading] = useState('');
-    const [loadError, setLoadError] = useState('');
     const totalPrice = useRef(0.0);
+    const order = useSelector(state => orderSelectors.selectById(state, match.params.orderId));
+    const loading = useSelector(state => selectOrdersSlice(state).loading);
+    const loadError = useSelector(state => selectOrdersSlice(state).error);
 
     useEffect(() => {
+        dispatch(fetchAllOrders());
+    });
 
-        let cancelled = false;
-
-        async function getOrder() {
-            setLoading('order');
-            setLoadError('');
-            try {
-                const result = unwrapResult(await dispatch(getOrderById(match.params.orderId)));
-                if (!cancelled) {
-                    totalPrice.current = Object.keys(result.order.products).reduce(
-                        (total, productId) => {
-                            const product = result.order.products[productId];
-                            return total + product.unitPrice * product.quantity;
-                        },
-                        0.0
-                    );
-                    setOrder(result.order);
-                }
-            } catch (e) {
-                if (!cancelled) {
-                    setOrder(null);
-                    setLoadError(e);
-                }
-            } finally {
-                if (!cancelled) {
-                    setLoading('');
-                }
-            }
-        }
-
-        // noinspection JSIgnoredPromiseFromCall
-        getOrder();
-
-        return () => {
-            cancelled = true;
-        };
-        // eslint-disable-next-line
-    }, [match]);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        async function getProducts() {
-            if (!cancelled) {
-                setLoading('products');
-                setLoadError('');
-            }
-            try {
-                const response = unwrapResult(await dispatch(fetchProductsByIds(
-                    Object.keys(order.products).map(productId => parseInt(productId))
-                )));
-                if (!cancelled) {
-                    setProducts(response.products.reduce((productsById, product) => {
-                        productsById[product.id] = product;
-                        return productsById;
-                    }, {}))
-                }
-            } catch (e) {
-                if (!cancelled) {
-                    setProducts(null);
-                    setLoadError(e);
-                }
-            } finally {
-                if (!cancelled) {
-                    setLoading('');
-                }
-            }
-        }
-
-        if (order) {
-            // noinspection JSIgnoredPromiseFromCall
-            getProducts();
-        }
-
-        return () => {
-            cancelled = true;
-        };
-        // eslint-disable-next-line
-    }, [order]);
-
-    function reStock(order) {
+    function reStockOrder() {
         Object.keys(order.products).forEach(productId => {
-            const product = products[productId];
-            const quantity = order.products[productId].quantity;
-            const remaining = product.inventory + quantity;
-            dispatch(updateProduct({
-                id: parseInt(productId),
-                changes: {
-                    inventory: remaining,
-                }
-            }));
+            dispatch(modifyInventory({
+                productId: parseInt(productId),
+                quantity: order.products[productId].quantity,
+            }))
         });
     }
 
-    function handleCancel(orderId) {
-        dispatch(cancelOrder(orderId));
-        reStock(order);
+    function handleCancel() {
+        dispatch(cancelOrder(order.id));
+        reStockOrder();
         history.replace('/orders');
     }
 
-    if (order && products) {
+    if (loading) {
+        return <Loading what='order'/>;
+    }
+
+    if (loadError) {
+        return <Message error content={loadError}/>;
+    }
+
+    if (order) {
         return (
             <Grid celled container>
                 <Grid.Row>
@@ -161,11 +110,10 @@ export default () => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                {Object.keys(products).map(productId => (
+                                {Object.keys(order.products).map(productId => (
                                     <OrderProductRow
                                         key={productId}
                                         order={order}
-                                        products={products}
                                         productId={productId}
                                     />
                                 ))}
@@ -193,14 +141,6 @@ export default () => {
                 </Grid.Row>
             </Grid>
         );
-    }
-
-    if (loading) {
-        return <Loading what={loading}/>;
-    }
-
-    if (loadError) {
-        return <Message error content={loadError}/>
     }
 
     return null;

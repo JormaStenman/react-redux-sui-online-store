@@ -1,6 +1,5 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import client from "../../app/client";
-import LoadingStatus from "../../app/LoadingStatus";
 
 export const OrderStatus = {
     ordered: 'ordered',
@@ -19,83 +18,73 @@ export const selectLatestOrder = state => selectOrdersSlice(state).latestOrder;
 
 export const orderSelectors = entityAdapter.getSelectors(state => selectOrdersSlice(state));
 
-// noinspection DuplicatedCode
-export const ordersSlice = createSlice({
-    name: ordersSliceName,
-    initialState: entityAdapter.getInitialState({
-        status: LoadingStatus.idle,
-        error: null,
-        latestOrder: null,
-    }),
-    reducers: {
-        setAll: entityAdapter.setAll,
-        addOrder: (state, action) => {
-            entityAdapter.addOne(state, action);
-            state.latestOrder = action.payload;
-        },
-        deleteOrder: entityAdapter.removeOne,
-        setStatus: (state, action) => {
-            state.status = action.payload;
-        },
-        setError: (state, action) => {
-            state.error = action.payload;
-        },
-        setLatestOrder: (state, action) => {
-            state.latestOrder = action.payload;
-        }
+export const fetchAllOrders = createAsyncThunk(
+    'orders/fetchAllOrders',
+    async (_) => {
+        return await client.getAllOrders();
     },
-});
-
-export const getOrderById = createAsyncThunk(
-    'orders/getOrderById',
-    async (orderId, {rejectWithValue}) => {
-        try {
-            return await client.getOrderById(orderId);
-        } catch (e) {
-            return rejectWithValue(e.message || 'error fetching order');
-        }
-    },
-)
-
-export const fetchOrders = createAsyncThunk(
-    'orders/fetchOrders',
-    async (_, {dispatch}) => {
-        dispatch(ordersSlice.actions.setStatus(LoadingStatus.loading));
-        try {
-            const result = await client.getAllOrders();
-            dispatch(ordersSlice.actions.setStatus(LoadingStatus.success));
-            dispatch(ordersSlice.actions.setError(null));
-            dispatch(ordersSlice.actions.setAll(result.orders))
-        } catch (e) {
-            dispatch(ordersSlice.actions.setStatus(LoadingStatus.failed));
-            dispatch(ordersSlice.actions.setError(e.message));
-        }
+    {
+        condition: (_, {getState}) => {
+            const ordersState = selectOrdersSlice(getState());
+            const total = entityAdapter.getSelectors().selectTotal(ordersState);
+            return total === 0 && !ordersState.loading;
+        },
     }
 );
 
 export const createOrder = createAsyncThunk(
     'orders/createOrder',
-    async (newOrder, {rejectWithValue, dispatch}) => {
-        dispatch(ordersSlice.actions.setLatestOrder(null));
-        try {
-            const response = await client.createOrder(newOrder);
-            dispatch(ordersSlice.actions.addOrder(response.order));
-        } catch (e) {
-            return rejectWithValue(e.message || 'error creating new order');
-        }
+    async newOrder => {
+        return await client.createOrder(newOrder);
     }
 );
 
 export const cancelOrder = createAsyncThunk(
     'orders/cancelOrder',
-    async (orderId, {rejectWithValue, dispatch}) => {
-        try {
-            await client.deleteOrder(orderId);
-            dispatch(ordersSlice.actions.deleteOrder(orderId));
-        } catch (e) {
-            return rejectWithValue(e.message || 'error creating new order');
-        }
+    async orderId => {
+        return await client.deleteOrder(orderId);
     }
 );
+
+export const ordersSlice = createSlice({
+    name: ordersSliceName,
+    initialState: entityAdapter.getInitialState({
+        loading: false,
+        error: null,
+        latestOrder: null,
+    }),
+    extraReducers: builder => {
+        builder
+            .addCase(fetchAllOrders.fulfilled, (state, action) => {
+                entityAdapter.setAll(state, action.payload.orders);
+            })
+            .addCase(fetchAllOrders.rejected, (state, action) => {
+                entityAdapter.setAll(state, []);
+            })
+            .addCase(createOrder.pending, state => {
+                state.latestOrder = null;
+            })
+            .addCase(createOrder.fulfilled, (state, action) => {
+                state.latestOrder = action.payload.order;
+                entityAdapter.addOne(state, action.payload.order);
+            })
+            .addCase(cancelOrder.fulfilled, (state, action) => {
+                entityAdapter.removeOne(state, action.payload.deleted);
+            })
+            .addMatcher(action => action.type.endsWith('/pending'), state => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addMatcher(action => action.type.endsWith('/fulfilled'), state => {
+                state.loading = false;
+                state.error = null;
+            })
+            .addMatcher(action => action.type.endsWith('/rejected'), (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+        ;
+    },
+});
 
 export default ordersSlice.reducer;

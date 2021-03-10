@@ -1,64 +1,73 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import client from "../../app/client";
-import LoadingStatus from "../../app/LoadingStatus";
-
-export const fetchProducts = createAsyncThunk(
-    'products/fetchProducts',
-    async (_, {rejectWithValue}) => {
-        try {
-            return await client.getAllProducts();
-        } catch (e) {
-            return rejectWithValue(e.message || 'error fetching products');
-        }
-    }
-);
-
-export const fetchProductsByIds = createAsyncThunk(
-    'products/fetchProductsById',
-    async (ids, {rejectWithValue}) => {
-        try {
-            return await client.getProductsByIds(ids);
-        } catch (e) {
-            return rejectWithValue(e.message || 'error fetching products');
-        }
-    }
-);
 
 const entityAdapter = createEntityAdapter({
-    sortComparer: (a, b) => (a.name || '').localeCompare((b.name || '')),
+    sortComparer: (a, b) => a.name.localeCompare(b.name),
 });
 
-// noinspection DuplicatedCode
-export const productsSlice = createSlice({
-    name: 'products',
-    initialState: entityAdapter.getInitialState({
-        status: LoadingStatus.idle,
-        error: null,
-    }),
-    reducers: {
-        setAll: entityAdapter.setAll,
-        updateProduct: entityAdapter.updateOne,
-    },
-    extraReducers: {
-        [fetchProducts.pending]: state => {
-            state.status = LoadingStatus.loading;
-        },
-        [fetchProducts.fulfilled]: (state, action) => {
-            state.status = LoadingStatus.success;
-            entityAdapter.setAll(state, action.payload.products || []);
-            state.error = null;
-        },
-        [fetchProducts.rejected]: (state, action) => {
-            state.status = LoadingStatus.failed;
-            state.error = action.payload;
-        },
-    },
-});
+const productsSliceName = 'products';
 
-export const {setAll, updateProduct} = productsSlice.actions;
-
-export const selectProductsSlice = state => state[productsSlice.name];
+export const selectProductsSlice = state => state[productsSliceName];
 
 export const productSelectors = entityAdapter.getSelectors(state => selectProductsSlice(state));
+
+export const fetchAllProducts = createAsyncThunk(
+    'products/fetchAllProducts',
+    async (_) => {
+        return await client.getAllProducts();
+    },
+    {
+        condition: (_, {getState}) => {
+            const productsState = selectProductsSlice(getState());
+            const total = entityAdapter.getSelectors().selectTotal(productsState);
+            return total === 0 && !productsState.loading;
+        },
+    }
+);
+
+export const modifyInventory = createAsyncThunk(
+    'products/modifyInventory',
+    async ({productId, quantity}) => {
+        let {product: {id, inventory}} = await client.getProductById(productId);
+        inventory += quantity;
+        return await client.updateProduct({
+            id,
+            inventory,
+        });
+    },
+);
+
+export const productsSlice = createSlice({
+    name: productsSliceName,
+    initialState: entityAdapter.getInitialState({
+        loading: false,
+        error: null,
+    }),
+    extraReducers: builder => {
+        builder
+            .addCase(fetchAllProducts.fulfilled, (state, action) => {
+                entityAdapter.setAll(state, action.payload.products);
+            })
+            .addCase(fetchAllProducts.rejected, (state, action) => {
+                entityAdapter.setAll(state, []);
+            })
+            .addCase(modifyInventory.fulfilled, (state, action) => {
+                entityAdapter.upsertOne(state, action.payload.updated);
+            })
+            .addMatcher(action => action.type.endsWith('/pending'), state => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addMatcher(action => action.type.endsWith('/fulfilled'), state => {
+                state.loading = false;
+                state.error = null;
+            })
+            .addMatcher(action => action.type.endsWith('/rejected'), (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+        ;
+    },
+});
 
 export default productsSlice.reducer;

@@ -1,7 +1,7 @@
 import {Button, Input, Modal, Segment, Table} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
 import {emptyCart, selectCartSlice, setQuantity} from "./cartSlice";
-import {productSelectors, updateProduct} from "../products/productsSlice";
+import {productSelectors, modifyInventory} from "../products/productsSlice";
 import {currency} from "../../app/numberFormats";
 import {Link} from "react-router-dom";
 import {createOrder, OrderStatus, selectLatestOrder} from "../orders/ordersSlice";
@@ -67,7 +67,7 @@ export default () => {
 
     function assembleOrder() {
         return Object.keys(cart).reduce((order, productId) => {
-            const product = products[productId];
+            const product = products[parseInt(productId)];
             const quantity = cart[productId];
             // noinspection JSUnresolvedVariable
             const remaining = product.inventory - quantity;
@@ -81,11 +81,9 @@ export default () => {
                 // any product not in stock will set order status to 'waiting for products'
                 order.status = remaining < 0 ? OrderStatus.waitingForProducts : OrderStatus.ordered;
             }
-            dispatch(updateProduct({
-                id: parseInt(productId),
-                changes: {
-                    inventory: remaining,
-                }
+            dispatch(modifyInventory({
+                productId: product.id,
+                quantity: -quantity,
             }));
             return order;
         }, {products: {}});
@@ -154,7 +152,8 @@ export default () => {
                         <Modal.Content>
                             <Segment.Group>
                                 <Segment.Inline>
-                                    {latestOrder && <Link to={`/orders/${latestOrder.id}`} replace>View your order.</Link>}
+                                    {latestOrder &&
+                                    <Link to={`/orders/${latestOrder.id}`} replace>View your order.</Link>}
                                 </Segment.Inline>
                                 <Segment.Inline>
                                     You can view all your orders on the <Link to='/orders' replace>Orders page</Link>

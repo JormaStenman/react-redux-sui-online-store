@@ -1,53 +1,73 @@
-import products from '../data/products.json';
+import initialProducts from '../data/products.json';
 import {random} from 'lodash/number'
 import {v4 as uuid} from 'uuid';
 
-export const getProductsByIds = ids => {
-    const idSet = new Set(ids);
+export const getProductById = id => {
     return promiseToReturn({
-        resultFunc: () => ({
-            products: products.filter(product => idSet.has(product.id))
-        }),
+        resultFunc: () => {
+            const products = loadProducts();
+            if (id in products) {
+                return {
+                    product: products[id],
+                }
+            }
+            throw new Error(`no product found matching id ${id}`);
+        }
     });
-}
+};
 
-export const getOrderById = id => {
+export const getProductsByIds = ids => {
     return promiseToReturn({
-        resultFunc: () => ({
-            order: loadOrders()[id],
-        }),
+        resultFunc: () => {
+            const idSet = new Set(ids);
+            const products = loadProducts();
+            const requestedProducts = idSet.keys().reduce((ary, productId) => {
+                if (products[productId]) {
+                    ary.push(products[productId]);
+                }
+                return ary;
+            }, []);
+            return {
+                products: requestedProducts,
+            };
+        },
     });
-}
+};
 
 export const getAllProducts = () => {
     return promiseToReturn({
         resultFunc: () => ({
-            products
-        })
+            products: Object.values(loadProducts())
+        }),
     });
-}
+};
 
-export const getProductById = productId => {
+export const updateProduct = update => {
     return promiseToReturn({
         resultFunc: () => {
-            const product = products.find(product => product.id === productId);
-            if (!product) {
-                throw new Error(`No product found matching id ${productId}.`);
+            const products = loadProducts();
+            if (update.id in products) {
+                products[update.id] = {
+                    ...products[update.id],
+                    ...update,
+                };
+                storeProducts(products);
+                return {
+                    updated: products[update.id],
+                };
             }
-            return {
-                product
-            };
-        }
+            throw new Error(`No product found with id ${update.id}.`);
+        },
     });
-}
+};
 
 export const getAllOrders = () => {
     return promiseToReturn({
         resultFunc: () => ({
             orders: Object.values(loadOrders())
-        })
+        }),
     });
-}
+};
 
 export const createOrder = newOrder => {
     return promiseToReturn({
@@ -67,7 +87,7 @@ export const createOrder = newOrder => {
             }
         },
     });
-}
+};
 
 export const deleteOrder = orderId => {
     return promiseToReturn({
@@ -80,7 +100,7 @@ export const deleteOrder = orderId => {
             }
         },
     });
-}
+};
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -88,9 +108,9 @@ export default {
     deleteOrder,
     getAllOrders,
     getAllProducts,
-    getOrderById,
     getProductById,
     getProductsByIds,
+    updateProduct,
 };
 
 function getError(errorProb) {
@@ -134,7 +154,26 @@ function storeOrders(orders) {
     window.localStorage.setItem(ordersKey, JSON.stringify(orders));
 }
 
+// noinspection SpellCheckingInspection
+const productsKey = 'me.stenman.products';
+
+function loadProducts() {
+    const item = window.localStorage.getItem(productsKey);
+    return item ? JSON.parse(item) :
+        initialProducts.reduce((productsById, product) => {
+            productsById[product.id] = product;
+            return productsById;
+        }, {});
+}
+
+function storeProducts(products) {
+    window.localStorage.setItem(productsKey, JSON.stringify(products));
+}
+
+
 // (() => {
 //     console.log('clearing orders from localStorage');
 //     window.localStorage.removeItem(ordersKey);
+//     console.log('clearing products from localStorage');
+//     window.localStorage.removeItem(productsKey);
 // })();

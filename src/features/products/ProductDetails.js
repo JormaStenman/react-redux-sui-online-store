@@ -2,58 +2,24 @@ import {Button, Card, Container, Grid, Image, Message, Modal} from "semantic-ui-
 import {Link, useRouteMatch} from "react-router-dom";
 import {productImageSrc} from "../../app/productUtils";
 import {currency} from "../../app/numberFormats";
-import {useDispatch} from "react-redux";
-import {fetchProductsByIds} from "./productsSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchAllProducts, productSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect, useState} from "react";
 import {addToCart} from "../cart/cartSlice";
 import StoreModal from "../modal/StoreModal";
 import Loading from "../loading/Loading";
-import {unwrapResult} from "@reduxjs/toolkit";
 
 export default function ProductDetails() {
     const match = useRouteMatch();
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [loadError, setLoadError] = useState('');
+    const product = useSelector(state => productSelectors.selectById(state, match.params.productId));
+    const loading = useSelector(state => selectProductsSlice(state).loading);
+    const loadError = useSelector(state => selectProductsSlice(state).error);
     const dispatch = useDispatch();
     const [addModalOpen, setAddModalOpen] = useState(false);
 
     useEffect(() => {
-        let cancelled = false;
-
-        async function getProduct() {
-            setLoading(true);
-            setLoadError('');
-            try {
-                const response = unwrapResult(await dispatch(fetchProductsByIds([parseInt(match.params.productId)])));
-                if (!cancelled) {
-                    const products = response.products;
-                    if (products.length) {
-                        setProduct(products[0]);
-                    } else {
-                        setProduct(null);
-                        setLoadError('product not found');
-                    }
-                }
-            } catch (e) {
-                if (!cancelled) {
-                    setProduct(null);
-                    setLoadError(e);
-                }
-            } finally {
-                if (!cancelled) {
-                    setLoading(false);
-                }
-            }
-        }
-
-        // noinspection JSIgnoredPromiseFromCall
-        getProduct();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [dispatch, match.params.productId]);
+        dispatch(fetchAllProducts());
+    }, [dispatch]);
 
     function handleAddClick(productId) {
         dispatch(addToCart(productId));
