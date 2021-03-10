@@ -1,17 +1,55 @@
-import {Message, Table} from "semantic-ui-react";
-import {useSelector} from "react-redux";
-import {orderSelectors, OrderStatus} from "./ordersSlice";
+import {Message, Placeholder, Table} from "semantic-ui-react";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchOrders, orderSelectors, OrderStatus, selectOrdersSlice} from "./ordersSlice";
 import {Link, useLocation} from "react-router-dom";
-import {productSelectors} from "../products/productsSlice";
+import {fetchProductsByIds} from "../products/productsSlice";
+import {useEffect, useState} from "react";
+import LoadingStatus from "../../app/LoadingStatus";
+import Loading from "../loading/Loading";
+import {unwrapResult} from "@reduxjs/toolkit";
 import {truncate} from "lodash/string";
 
 function OrderRow({order}) {
     const location = useLocation();
-    const productsById = useSelector(state => productSelectors.selectEntities(state));
+    const dispatch = useDispatch();
+    const [productNamesInOrder, setProductNamesInOrder] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [loadError, setLoadError] = useState('');
 
-    function productNamesInOrder(order) {
-        return Object.keys(order.products).map(productId => truncate(productsById[parseInt(productId)].name, {length: 20}));
-    }
+    useEffect(() => {
+
+        let cancelled = false;
+
+        async function getProductNamesInOrder(order) {
+            const productIds = Object.keys(order.products).map(productId => parseInt(productId));
+            if (!cancelled) {
+                setLoading(true);
+                setLoadError('');
+            }
+            try {
+                const result = unwrapResult(await dispatch(fetchProductsByIds(productIds)));
+                if (!cancelled) {
+                    setProductNamesInOrder(result.products.map(product => truncate(product.name, {length: 20})));
+                }
+            } catch (e) {
+                if (!cancelled) {
+                    setProductNamesInOrder([]);
+                    setLoadError(e);
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            }
+        }
+
+        // noinspection JSIgnoredPromiseFromCall
+        getProductNamesInOrder(order);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [order, dispatch]);
 
     function statusToText(orderStatus) {
         switch (orderStatus) {
@@ -24,6 +62,23 @@ function OrderRow({order}) {
         }
     }
 
+    function orderContents() {
+        if (loading) {
+            return (
+                <Placeholder fluid>
+                    <Placeholder.Paragraph>
+                        <Placeholder.Line/>
+                        <Placeholder.Line/>
+                    </Placeholder.Paragraph>
+                </Placeholder>
+            );
+        }
+        if (loadError) {
+            return <Message error content={loadError}/>
+        }
+        return productNamesInOrder.join(', ');
+    }
+
     const orderUrl = `${location.pathname}/${order.id}`;
 
     return (
@@ -34,7 +89,7 @@ function OrderRow({order}) {
                 <Link to={orderUrl}>{order.id}</Link>
             </Table.Cell>
             <Table.Cell>
-                {productNamesInOrder(order).join(', ')}
+                {orderContents()}
             </Table.Cell>
         </Table.Row>
     );
@@ -42,31 +97,58 @@ function OrderRow({order}) {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default () => {
+    const dispatch = useDispatch();
     const orders = useSelector(state => orderSelectors.selectAll(state));
+    const loadingStatus = useSelector(state => selectOrdersSlice(state).status);
+    const loadingError = useSelector(state => selectOrdersSlice(state).error);
 
-    if (orders.length) {
-        return (
-            <>
-                <Table striped>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell width={2}>Date</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Status</Table.HeaderCell>
-                            <Table.HeaderCell width={6}>ID</Table.HeaderCell>
-                            <Table.HeaderCell width={6}>Contents</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {orders.map(order => (
-                            <OrderRow key={order.id} order={order}/>
-                        ))}
-                    </Table.Body>
-                </Table>
-            </>
-        );
-    } else {
-        return (
-            <Message success>You have no orders.</Message>
-        );
+    useEffect(() => {
+        if ((!orders || !orders.length) && loadingStatus === LoadingStatus.idle) {
+            dispatch(fetchOrders());
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+
+    switch (loadingStatus) {
+        case LoadingStatus.success:
+        case LoadingStatus.idle:
+            if (orders.length) {
+                return (
+                    <>
+                        <Table striped>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell width={2}>Date</Table.HeaderCell>
+                                    <Table.HeaderCell width={2}>Status</Table.HeaderCell>
+                                    <Table.HeaderCell width={6}>ID</Table.HeaderCell>
+                                    <Table.HeaderCell width={6}>Contents</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {orders.map(order => (
+                                    <OrderRow key={order.id} order={order}/>
+                                ))}
+                            </Table.Body>
+                        </Table>
+                    </>
+                );
+            } else {
+                return (
+                    <Message success>You have no orders.</Message>
+                );
+            }
+        case LoadingStatus.loading:
+            return <Loading what='orders'/>
+        case LoadingStatus.failed:
+            return (
+                <Message error>
+                    <p>Error loading orders: {loadingError}</p>
+                    <p>Try refreshing the page.</p>
+                </Message>
+            );
+        default:
+            return null;
     }
+
 }

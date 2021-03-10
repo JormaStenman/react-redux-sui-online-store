@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import './App.css';
 import {Container} from "semantic-ui-react";
 import Navbar from "./features/navbar/Navbar";
@@ -8,25 +8,9 @@ import ProductDetails from "./features/products/ProductDetails";
 import ProductList from "./features/products/ProductList";
 import Cart from "./features/cart/Cart";
 import Orders from "./features/orders/Orders";
-import {useDispatch, useSelector} from "react-redux";
-import {fetchProducts, productSelectors} from "./features/products/productsSlice";
-import {fetchOrders, orderSelectors} from "./features/orders/ordersSlice";
 import OrderDetails from "./features/orders/OrderDetails";
 
 export default function App() {
-    const dispatch = useDispatch();
-    const products = useSelector(state => productSelectors.selectAll(state));
-    const orders = useSelector(state => orderSelectors.selectAll(state));
-
-    useEffect(() => {
-        if (!products || !products.length) {
-            dispatch(fetchProducts());
-        }
-        if (!orders || !orders.length) {
-            dispatch(fetchOrders());
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     return (
         <Container>

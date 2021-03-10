@@ -4,7 +4,7 @@ import {emptyCart, selectCartSlice, setQuantity} from "./cartSlice";
 import {productSelectors, updateProduct} from "../products/productsSlice";
 import {currency} from "../../app/numberFormats";
 import {Link} from "react-router-dom";
-import {addOrder, OrderStatus, selectLatestOrder} from "../orders/ordersSlice";
+import {createOrder, OrderStatus, selectLatestOrder} from "../orders/ordersSlice";
 import {useState} from "react";
 import StoreModal from "../modal/StoreModal";
 
@@ -65,7 +65,7 @@ export default () => {
     const [orderModalOpen, setOrderModalOpen] = useState(false);
     const latestOrder = useSelector(state => selectLatestOrder(state));
 
-    function createOrder() {
+    function assembleOrder() {
         return Object.keys(cart).reduce((order, productId) => {
             const product = products[productId];
             const quantity = cart[productId];
@@ -92,7 +92,7 @@ export default () => {
     }
 
     function handlePlaceOrder() {
-        dispatch(addOrder(createOrder()));
+        dispatch(createOrder(assembleOrder()));
         dispatch(emptyCart());
         setOrderModalOpen(true);
     }

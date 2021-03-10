@@ -57,13 +57,17 @@ export default function ProductDetails() {
                                 </Card.Content>
                             </Grid.Column>
                         </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column>
+                                <Button.Group>
+                                    <Button icon='arrow alternate circle left outline' content='See more products' as={Link}
+                                            to='/products'/>
+                                    <Button primary icon='add to cart' content='Add to cart'
+                                            onClick={() => handleAddClick(productId)}/>
+                                </Button.Group>
+                            </Grid.Column>
+                        </Grid.Row>
                     </Grid>
-                    <Button.Group>
-                        <Button icon='arrow alternate circle left outline' content='See more products' as={Link}
-                                to='/products'/>
-                        <Button primary icon='add to cart' content='Add to cart'
-                                onClick={() => handleAddClick(productId)}/>
-                    </Button.Group>
                 </Card>
                 <StoreModal
                     modalOpen={addModalOpen}

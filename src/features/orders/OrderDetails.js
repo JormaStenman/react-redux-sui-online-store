@@ -1,24 +1,27 @@
-import {Link, Redirect, useHistory, useRouteMatch} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {deleteOrder, orderSelectors} from "./ordersSlice";
-import {Button, Grid, Image, Table} from "semantic-ui-react";
-import {productSelectors, updateProduct} from "../products/productsSlice";
+import {Link, useHistory, useRouteMatch} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {cancelOrder, getOrderById} from "./ordersSlice";
+import {Button, Grid, Image, Message, Table} from "semantic-ui-react";
+import {fetchProductsByIds, updateProduct} from "../products/productsSlice";
 import {productImageSrc} from "../../app/productUtils";
 import {currency} from "../../app/numberFormats";
+import {useEffect, useRef, useState} from "react";
+import {unwrapResult} from "@reduxjs/toolkit";
+import Loading from "../loading/Loading";
 
-function OrderRow({orderRow}) {
+function OrderProductRow({order, products, productId}) {
     return (
         <Table.Row>
             <Table.Cell>
-                <Link to={`/products/${orderRow.product.id}`}>
-                    <Image size='tiny' inline src={productImageSrc(orderRow.product.id)}/>
+                <Link to={`/products/${productId}`}>
+                    <Image size='tiny' inline src={productImageSrc(productId)}/>
                     &nbsp;
-                    {orderRow.product.name}
+                    {products[productId].name}
                 </Link>
             </Table.Cell>
-            <Table.Cell>{orderRow.quantity}</Table.Cell>
+            <Table.Cell>{order.products[productId].quantity}</Table.Cell>
             <Table.Cell>
-                <span className='price'>{currency.format(orderRow.unitPrice)}</span>
+                <span className='price'>{currency.format(order.products[productId].unitPrice)}</span>
             </Table.Cell>
         </Table.Row>
     );
@@ -29,30 +32,97 @@ export default () => {
     const dispatch = useDispatch();
     const match = useRouteMatch();
     const history = useHistory();
-    // noinspection JSUnresolvedVariable
-    const order = useSelector(state => orderSelectors.selectById(state, match.params.orderId));
-    const productsById = useSelector(state => productSelectors.selectEntities(state));
-    const products = useSelector(state => productSelectors.selectEntities(state));
+    const [order, setOrder] = useState(null);
+    const [products, setProducts] = useState(null);
+    const [loading, setLoading] = useState('');
+    const [loadError, setLoadError] = useState('');
+    const totalPrice = useRef(0.0);
 
-    let totalPrice = 0.0;
+    useEffect(() => {
 
-    function orderRows() {
-        return Object.keys(order.products).map(productId => {
-            const product = productsById[parseInt(productId)];
-            const {quantity, unitPrice} = order.products[productId];
-            totalPrice += quantity * unitPrice;
-            return {
-                product,
-                quantity,
-                unitPrice,
-            };
-        });
-    }
+        let cancelled = false;
+
+        async function getOrder() {
+            setLoading('order');
+            setLoadError('');
+            try {
+                const result = unwrapResult(await dispatch(getOrderById(match.params.orderId)));
+                if (!cancelled) {
+                    totalPrice.current = Object.keys(result.order.products).reduce(
+                        (total, productId) => {
+                            const product = result.order.products[productId];
+                            return total + product.unitPrice * product.quantity;
+                        },
+                        0.0
+                    );
+                    setOrder(result.order);
+                }
+            } catch (e) {
+                if (!cancelled) {
+                    setOrder(null);
+                    setLoadError(e);
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading('');
+                }
+            }
+        }
+
+        // noinspection JSIgnoredPromiseFromCall
+        getOrder();
+
+        return () => {
+            cancelled = true;
+        };
+        // eslint-disable-next-line
+    }, [match]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function getProducts() {
+            if (!cancelled) {
+                setLoading('products');
+                setLoadError('');
+            }
+            try {
+                const response = unwrapResult(await dispatch(fetchProductsByIds(
+                    Object.keys(order.products).map(productId => parseInt(productId))
+                )));
+                if (!cancelled) {
+                    setProducts(response.products.reduce((productsById, product) => {
+                        productsById[product.id] = product;
+                        return productsById;
+                    }, {}))
+                }
+            } catch (e) {
+                if (!cancelled) {
+                    setProducts(null);
+                    setLoadError(e);
+                }
+            } finally {
+                if (!cancelled) {
+                    setLoading('');
+                }
+            }
+        }
+
+        if (order) {
+            // noinspection JSIgnoredPromiseFromCall
+            getProducts();
+        }
+
+        return () => {
+            cancelled = true;
+        };
+        // eslint-disable-next-line
+    }, [order]);
 
     function reStock(order) {
         Object.keys(order.products).forEach(productId => {
             const product = products[productId];
-            const quantity = (order.products)[productId].quantity;
+            const quantity = order.products[productId].quantity;
             const remaining = product.inventory + quantity;
             dispatch(updateProduct({
                 id: parseInt(productId),
@@ -63,13 +133,13 @@ export default () => {
         });
     }
 
-    function handleCancel(order) {
-        dispatch(deleteOrder(order.id));
+    function handleCancel(orderId) {
+        dispatch(cancelOrder(orderId));
         reStock(order);
         history.replace('/orders');
     }
 
-    if (order) {
+    if (order && products) {
         return (
             <Grid celled container>
                 <Grid.Row>
@@ -91,9 +161,14 @@ export default () => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                {(orderRows() || []).map(orderRow => (
-                                    <OrderRow orderRow={orderRow} key={orderRow.product.id}/>)
-                                )}
+                                {Object.keys(products).map(productId => (
+                                    <OrderProductRow
+                                        key={productId}
+                                        order={order}
+                                        products={products}
+                                        productId={productId}
+                                    />
+                                ))}
                             </Table.Body>
                         </Table>
                     </Grid.Column>
@@ -101,16 +176,17 @@ export default () => {
                 <Grid.Row>
                     <Grid.Column width={10}>
                         Order total:&nbsp;
-                        <b><span className='price'>{currency.format(totalPrice)}</span></b>
+                        <b><span className='price'>{currency.format(totalPrice.current)}</span></b>
                     </Grid.Column>
                     <Grid.Column width={6}>
                         <Button.Group fluid>
-                            <Button icon='arrow alternate circle left outline' content='All orders' as={Link}
+                            <Button icon='arrow alternate circle left outline' content='All orders'
+                                    as={Link}
                                     to='/orders'/>
                             <Button
                                 icon='trash alternate'
                                 negative
-                                onClick={() => handleCancel(order)} content='Cancel order'
+                                onClick={() => handleCancel(order.id)} content='Cancel order'
                             />
                         </Button.Group>
                     </Grid.Column>
@@ -118,5 +194,14 @@ export default () => {
             </Grid>
         );
     }
-    return <Redirect to='/orders'/>
+
+    if (loading) {
+        return <Loading what={loading}/>;
+    }
+
+    if (loadError) {
+        return <Message error content={loadError}/>
+    }
+
+    return null;
 };

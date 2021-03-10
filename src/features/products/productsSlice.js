@@ -13,6 +13,17 @@ export const fetchProducts = createAsyncThunk(
     }
 );
 
+export const fetchProductsByIds = createAsyncThunk(
+    'products/fetchProductsById',
+    async (ids, {rejectWithValue}) => {
+        try {
+            return await client.getProductsByIds(ids);
+        } catch (e) {
+            return rejectWithValue(e.message || 'error fetching products');
+        }
+    }
+);
+
 const entityAdapter = createEntityAdapter({
     sortComparer: (a, b) => (a.name || '').localeCompare((b.name || '')),
 });

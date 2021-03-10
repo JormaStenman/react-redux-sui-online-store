@@ -1,75 +1,101 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import client from "../../app/client";
 import LoadingStatus from "../../app/LoadingStatus";
-import {v4 as uuid} from 'uuid';
 
 export const OrderStatus = {
     ordered: 'ordered',
     waitingForProducts: 'waitingForProducts',
 };
 
+const entityAdapter = createEntityAdapter({
+    sortComparer: (a, b) => b.createdAt - a.createdAt,
+});
+
+const ordersSliceName = 'orders';
+
+export const selectOrdersSlice = state => state[ordersSliceName];
+
+export const selectLatestOrder = state => selectOrdersSlice(state).latestOrder;
+
+export const orderSelectors = entityAdapter.getSelectors(state => selectOrdersSlice(state));
+
+// noinspection DuplicatedCode
+export const ordersSlice = createSlice({
+    name: ordersSliceName,
+    initialState: entityAdapter.getInitialState({
+        status: LoadingStatus.idle,
+        error: null,
+        latestOrder: null,
+    }),
+    reducers: {
+        setAll: entityAdapter.setAll,
+        addOrder: (state, action) => {
+            entityAdapter.addOne(state, action);
+            state.latestOrder = action.payload;
+        },
+        deleteOrder: entityAdapter.removeOne,
+        setStatus: (state, action) => {
+            state.status = action.payload;
+        },
+        setError: (state, action) => {
+            state.error = action.payload;
+        },
+        setLatestOrder: (state, action) => {
+            state.latestOrder = action.payload;
+        }
+    },
+});
+
+export const getOrderById = createAsyncThunk(
+    'orders/getOrderById',
+    async (orderId, {rejectWithValue}) => {
+        try {
+            return await client.getOrderById(orderId);
+        } catch (e) {
+            return rejectWithValue(e.message || 'error fetching order');
+        }
+    },
+)
+
 export const fetchOrders = createAsyncThunk(
     'orders/fetchOrders',
-    async (_, {rejectWithValue}) => {
+    async (_, {dispatch}) => {
+        dispatch(ordersSlice.actions.setStatus(LoadingStatus.loading));
         try {
-            return await client.getAllOrders();
+            const result = await client.getAllOrders();
+            dispatch(ordersSlice.actions.setStatus(LoadingStatus.success));
+            dispatch(ordersSlice.actions.setError(null));
+            dispatch(ordersSlice.actions.setAll(result.orders))
         } catch (e) {
-            return rejectWithValue(e.message || 'error fetching orders');
+            dispatch(ordersSlice.actions.setStatus(LoadingStatus.failed));
+            dispatch(ordersSlice.actions.setError(e.message));
         }
     }
 );
 
-const entityAdapter = createEntityAdapter({
-    sortComparer: (a, b) => a.date.localeCompare(b.date),
-});
+export const createOrder = createAsyncThunk(
+    'orders/createOrder',
+    async (newOrder, {rejectWithValue, dispatch}) => {
+        dispatch(ordersSlice.actions.setLatestOrder(null));
+        try {
+            const response = await client.createOrder(newOrder);
+            dispatch(ordersSlice.actions.addOrder(response.order));
+        } catch (e) {
+            return rejectWithValue(e.message || 'error creating new order');
+        }
+    }
+);
 
-// noinspection DuplicatedCode
-export const ordersSlice = createSlice({
-    name: 'orders',
-    initialState: entityAdapter.getInitialState({
-        status: LoadingStatus.idle,
-        error: null,
-    }),
-    reducers: {
-        addOrder: {
-            reducer: entityAdapter.addOne,
-            prepare: userPayload => ({
-                payload: {
-                    ...userPayload,
-                    id: uuid(),
-                    date: new Date().toISOString().substr(0, 10),
-                    createdAt: Date.now(),
-                }
-            }),
-        },
-        deleteOrder: entityAdapter.removeOne,
-    },
-    extraReducers: {
-        [fetchOrders.pending]: state => {
-            state.status = LoadingStatus.loading;
-        },
-        [fetchOrders.fulfilled]: (state, action) => {
-            state.status = LoadingStatus.success;
-            entityAdapter.setAll(state, action.payload.orders || []);
-            state.error = null;
-        },
-        [fetchOrders.rejected]: (state, action) => {
-            state.status = LoadingStatus.failed;
-            state.error = action.payload;
-        },
-    },
-});
-
-export const {addOrder, deleteOrder} = ordersSlice.actions;
-
-export const selectOrdersSlice = state => state[ordersSlice.name];
-
-export const orderSelectors = entityAdapter.getSelectors(state => selectOrdersSlice(state));
-
-export const selectLatestOrder = state => {
-    const sorted = orderSelectors.selectAll(state)
-        .sort((a, b) => b.createdAt - a.createdAt);
-    return sorted && sorted.length ? sorted[0] : undefined;
-};
+export const cancelOrder = createAsyncThunk(
+    'orders/cancelOrder',
+    async (orderId, {rejectWithValue, dispatch}) => {
+        try {
+            await client.deleteOrder(orderId);
+            dispatch(ordersSlice.actions.deleteOrder(orderId));
+        } catch (e) {
+            return rejectWithValue(e.message || 'error creating new order');
+        }
+    }
+);
 
 export default ordersSlice.reducer;
