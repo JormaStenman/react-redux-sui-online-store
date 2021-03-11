@@ -2,10 +2,10 @@ import {Link, useHistory, useRouteMatch} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {cancelOrder, fetchAllOrders, orderSelectors, selectOrdersSlice} from "./ordersSlice";
 import {Button, Grid, Image, Message, Placeholder, Table} from "semantic-ui-react";
-import {fetchAllProducts, productSelectors, modifyInventory, selectProductsSlice} from "../products/productsSlice";
+import {fetchAllProducts, modifyInventory, productSelectors, selectProductsSlice} from "../products/productsSlice";
 import {productImageSrc} from "../../app/productUtils";
 import {currency} from "../../app/numberFormats";
-import {useEffect, useRef} from "react";
+import {useEffect, useState} from "react";
 import Loading from "../loading/Loading";
 
 function OrderProductRow({order, productId}) {
@@ -56,7 +56,7 @@ export default () => {
     const dispatch = useDispatch();
     const match = useRouteMatch();
     const history = useHistory();
-    const totalPrice = useRef(0.0);
+    const [totalPrice, setTotalPrice] = useState(0.0);
     const order = useSelector(state => orderSelectors.selectById(state, match.params.orderId));
     const loading = useSelector(state => selectOrdersSlice(state).loading);
     const loadError = useSelector(state => selectOrdersSlice(state).error);
@@ -64,6 +64,18 @@ export default () => {
     useEffect(() => {
         dispatch(fetchAllOrders());
     });
+
+    useEffect(() => {
+        if (order && order.products) {
+            const productIds = Object.keys(order.products);
+            if (productIds && productIds.length) {
+                setTotalPrice(productIds.reduce((total, productId) => {
+                    const product = order.products[productId];
+                    return total + product.quantity * product.unitPrice;
+                }, 0.0));
+            }
+        }
+    }, [order]);
 
     function reStockOrder() {
         Object.keys(order.products).forEach(productId => {
@@ -124,7 +136,7 @@ export default () => {
                 <Grid.Row>
                     <Grid.Column width={10}>
                         Order total:&nbsp;
-                        <b><span className='price'>{currency.format(totalPrice.current)}</span></b>
+                        <b><span className='price'>{currency.format(totalPrice)}</span></b>
                     </Grid.Column>
                     <Grid.Column width={6}>
                         <Button.Group fluid>
