@@ -7,6 +7,7 @@ import {Link} from "react-router-dom";
 import {createOrder, OrderStatus, selectLatestOrder} from "../orders/ordersSlice";
 import {useState} from "react";
 import StoreModal from "../modal/StoreModal";
+import Loading from "../loading/Loading";
 
 function ProductRow({productId}) {
     const product = useSelector(state => productSelectors.selectById(state, parseInt(productId)));
@@ -95,6 +96,36 @@ export default () => {
         setOrderModalOpen(true);
     }
 
+    function orderModal() {
+        if (latestOrder) {
+            return (
+                <StoreModal
+                    modalOpen={orderModalOpen}
+                    setModalOpen={setOrderModalOpen}
+                    render={() => (
+                        <>
+                            <Modal.Header>
+                                Thank you for your order!
+                            </Modal.Header>
+                            <Modal.Content>
+                                <Segment.Group>
+                                    <Segment.Inline>
+                                        <Link to={`/orders/${latestOrder.id}`} replace>View this order.</Link>
+                                    </Segment.Inline>
+                                    <Segment.Inline>
+                                        You can view all your orders on the <Link to='/orders' replace>Orders
+                                        page</Link>
+                                    </Segment.Inline>
+                                </Segment.Group>
+                            </Modal.Content>
+                        </>
+                    )}
+                />
+            );
+        }
+        return <Loading what='order'/>
+    }
+
     return (
         <>
             <Table striped>
@@ -141,28 +172,8 @@ export default () => {
                     primary
                 />
             </Button.Group>
-            <StoreModal
-                modalOpen={orderModalOpen}
-                setModalOpen={setOrderModalOpen}
-                render={() => (
-                    <>
-                        <Modal.Header>
-                            Thank you for your order!
-                        </Modal.Header>
-                        <Modal.Content>
-                            <Segment.Group>
-                                <Segment.Inline>
-                                    {latestOrder &&
-                                    <Link to={`/orders/${latestOrder.id}`} replace>View your order.</Link>}
-                                </Segment.Inline>
-                                <Segment.Inline>
-                                    You can view all your orders on the <Link to='/orders' replace>Orders page</Link>
-                                </Segment.Inline>
-                            </Segment.Group>
-                        </Modal.Content>
-                    </>
-                )}
-            />
+
+            {orderModal()}
         </>
     );
 }

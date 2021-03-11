@@ -1,6 +1,6 @@
 import {Link, useHistory, useRouteMatch} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {cancelOrder, fetchAllOrders, orderSelectors, selectOrdersSlice} from "./ordersSlice";
+import {cancelOrder, fetchAllOrders, orderSelectors, orderStatusToText, selectOrdersSlice} from "./ordersSlice";
 import {Button, Grid, Image, Message, Placeholder, Table} from "semantic-ui-react";
 import {fetchAllProducts, modifyInventory, productSelectors, selectProductsSlice} from "../products/productsSlice";
 import {productImageSrc} from "../../app/productUtils";
@@ -104,11 +104,14 @@ export default () => {
         return (
             <Grid celled container>
                 <Grid.Row>
-                    <Grid.Column width={8}>
-                        Order id <b>{order.id}</b>
+                    <Grid.Column width={6}>
+                        Order id: <b>{order.id}</b>
                     </Grid.Column>
-                    <Grid.Column width={8}>
+                    <Grid.Column width={4}>
                         Order date: {order.date}
+                    </Grid.Column>
+                    <Grid.Column width={6}>
+                        Order status: {orderStatusToText(order.status)}
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>

@@ -1,5 +1,5 @@
 import {Button, Container, Header, List} from "semantic-ui-react";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {clearOrders, orderSelectors} from "../orders/ordersSlice";
 import {clearProducts, productSelectors} from "../products/productsSlice";
@@ -13,10 +13,10 @@ export default function MainContent() {
 
     useEffect(() => {
         const count = ordersCount + productsCount;
-        setClearButtonDisabled(count === 0);
         if (count === 0) {
             setClearButtonLoading(false);
         }
+        setClearButtonDisabled(count === 0);
     }, [ordersCount, productsCount]);
 
     function handleClear() {
@@ -46,7 +46,7 @@ export default function MainContent() {
             </List>
             <Header as='h2' dividing>Implementation aspects</Header>
             <p>
-                Here are some implementation aspects worth mentioning:
+                A few implementation details worth mentioning:
             </p>
             <List bulleted relaxed style={{marginTop: '2em', marginBottom: '2em'}}>
                 <List.Item>
@@ -84,6 +84,26 @@ export default function MainContent() {
                 </List.Item>
                 <List.Item>
                     UI components come from <a href='https://react.semantic-ui.com'>Semantic UI React</a>
+                </List.Item>
+            </List>
+            <Header as='h2' dividing>What next?</Header>
+            <p>
+                The app is pretty basic in its current state. Here are some ideas, prioritized, of what to add
+                next:
+            </p>
+            <List ordered relaxed style={{marginTop: '2em', marginBottom: '2em'}}>
+                <List.Item>
+                    As the main purpose of developing this app was to explore React and related technologies, and time
+                    was a bit of an issue, unit tests were omitted.
+                </List.Item>
+                <List.Item>
+                    There's no login/logout functionality for users.
+                </List.Item>
+                <List.Item>
+                    Could use a real database with a backend service.
+                </List.Item>
+                <List.Item>
+                    Currently, the app only speaks English. It could do with some l10n love.
                 </List.Item>
             </List>
             <Button

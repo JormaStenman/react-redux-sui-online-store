@@ -1,6 +1,6 @@
 import {Message, Placeholder, Table} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchAllOrders, orderSelectors, OrderStatus, selectOrdersSlice} from "./ordersSlice";
+import {fetchAllOrders, orderSelectors, orderStatusToText, selectOrdersSlice} from "./ordersSlice";
 import {Link, useLocation} from "react-router-dom";
 import {fetchAllProducts, productSelectors, selectProductsSlice} from "../products/productsSlice";
 import {useEffect} from "react";
@@ -17,17 +17,6 @@ function OrderRow({order}) {
     useEffect(() => {
         dispatch(fetchAllProducts());
     }, [dispatch]);
-
-    function statusToText(orderStatus) {
-        switch (orderStatus) {
-            case OrderStatus.ordered:
-                return 'ordered';
-            case OrderStatus.waitingForProducts:
-                return 'waiting for products';
-            default:
-                return '';
-        }
-    }
 
     function orderContents() {
         if (loading) {
@@ -57,7 +46,7 @@ function OrderRow({order}) {
     return (
         <Table.Row>
             <Table.Cell>{order.date}</Table.Cell>
-            <Table.Cell>{statusToText(order.status)}</Table.Cell>
+            <Table.Cell>{orderStatusToText(order.status)}</Table.Cell>
             <Table.Cell>
                 <Link to={orderUrl}>{order.id}</Link>
             </Table.Cell>
@@ -99,8 +88,8 @@ export default () => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell width={2}>Date</Table.HeaderCell>
-                            <Table.HeaderCell width={2}>Status</Table.HeaderCell>
-                            <Table.HeaderCell width={6}>ID</Table.HeaderCell>
+                            <Table.HeaderCell width={3}>Status</Table.HeaderCell>
+                            <Table.HeaderCell width={5}>ID</Table.HeaderCell>
                             <Table.HeaderCell width={6}>Contents</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>

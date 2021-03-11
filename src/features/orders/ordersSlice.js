@@ -6,6 +6,17 @@ export const OrderStatus = {
     waitingForProducts: 'waitingForProducts',
 };
 
+export function orderStatusToText(orderStatus) {
+    switch (orderStatus) {
+        case OrderStatus.ordered:
+            return 'ordered';
+        case OrderStatus.waitingForProducts:
+            return 'waiting for products';
+        default:
+            return '';
+    }
+}
+
 const entityAdapter = createEntityAdapter({
     sortComparer: (a, b) => b.createdAt - a.createdAt,
 });
