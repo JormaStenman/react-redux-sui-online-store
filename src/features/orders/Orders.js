@@ -32,13 +32,15 @@ function OrderRow({order}) {
             return <Message error content={loadError}/>
         }
 
-        return Object.keys(order.products).map(productId => {
+        const truncatedNames = Object.keys(order.products).map(productId => {
             const product = productsById[parseInt(productId)];
             if (product) {
                 return truncate(product.name, {length: 20});
             }
             return '';
         });
+
+        return truncatedNames.join(', ');
     }
 
     const orderUrl = `${location.pathname}/${order.id}`;

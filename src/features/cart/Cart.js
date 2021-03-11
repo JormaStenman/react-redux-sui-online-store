@@ -123,7 +123,10 @@ export default () => {
                 />
             );
         }
-        return <Loading what='order'/>
+        if (orderModalOpen) {
+            return <Loading what='order'/>
+        }
+        return null;
     }
 
     return (

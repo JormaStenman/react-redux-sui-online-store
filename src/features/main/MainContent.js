@@ -95,10 +95,10 @@ export default function MainContent() {
             </List>
             <Header as='h2' dividing>What next?</Header>
             <p>
-                The app is pretty basic in its current state. Here are some ideas, prioritized, of what to add
+                The app is pretty basic in its current state. Here are some ideas of what to add
                 next:
             </p>
-            <List ordered relaxed style={{marginTop: '2em', marginBottom: '2em'}}>
+            <List bulleted relaxed style={{marginTop: '2em', marginBottom: '2em'}}>
                 <List.Item>
                     As the main purpose of developing this app was to explore React and related technologies, and time
                     was a bit of an issue, unit tests were omitted.
@@ -110,7 +110,43 @@ export default function MainContent() {
                     Could use a real database with a backend service.
                 </List.Item>
                 <List.Item>
-                    Currently, the app only speaks English. It could do with some l10n love.
+                    The app only speaks English. It could do with some l10n love.
+                </List.Item>
+                <List.Item>
+                    Neither the products nor the orders listings are paged.
+                </List.Item>
+            </List>
+            <Header as='h2' dividing>Image credits</Header>
+            <p>
+                The images used in this app were downloaded from <a href='https://creativecommons.org'>the Creative
+                Commons website</a>. Here are the credits to their creators:
+            </p>
+            <List bulleted relaxed style={{marginTop: '2em', marginBottom: '2em'}}>
+                <List.Item>
+                    "Fruit salad" by lisaclarke is licensed with CC BY-ND 2.0. To view a copy of this license, visit
+                    &nbsp;<a
+                    href='https://creativecommons.org/licenses/by-nd/2.0/'>https://creativecommons.org/licenses/by-nd/2.0/</a>
+                </List.Item>
+                <List.Item>
+                    "Fruit Veggie Art" by NicoleMariePhotoworks is licensed with CC BY 2.0. To view a copy of this
+                    license, visit <a
+                    href='https://creativecommons.org/licenses/by/2.0/'>https://creativecommons.org/licenses/by/2.0/</a>
+                </List.Item>
+                <List.Item>
+                    "Fruit for a crisp" by lisaclarke is licensed under CC BY-ND 2.0
+                </List.Item>
+                <List.Item>
+                    "Fruits on a plate (testing iPhone 6+)" by Sergey Galyonkin is licensed under CC BY-SA 2.0
+                </List.Item>
+                <List.Item>
+                    "#napoli #market #antignano #frutta #fruits #clementine" by Antonio Manfredonio is licensed under CC
+                    BY-SA 2.0
+                </List.Item>
+                <List.Item>
+                    "strawberries" by seelensturm is licensed under CC BY 2.0
+                </List.Item>
+                <List.Item>
+                    "File:Grapes Emoji.png" by EmmanuelCordoliani is licensed under CC BY-SA 4.0
                 </List.Item>
             </List>
             <Button

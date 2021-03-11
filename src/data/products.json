@@ -1,44 +1,44 @@
 [
   {
-    "id": 13289,
-    "name": "Apple iPhone SE 64 Gt -puhelin",
-    "details": "Apple iPhone SE on kaikkien aikojen tehokkain 4,7 tuuman iPhone. Sen A13 Bionic -siru on älypuhelinten nopein ja se tuo vaikuttavaa suorituskykyä appeihin, peleihin ja valokuvaukseen. Muotokuvatila studiotasoisia muotokuvia varten, ja lisäksi kuusi valotehostetta. Seuraavan sukupolven älykkäällä HDR:llä saat loistavasti yksityiskohtia niin kirkkaissa kuin varjoisissakin kohdissa. Elokuvatasoinen 4K- video. Ja kaikki iOS:n edistykselliset ominaisuudet. Pitkä akunkesto ja vesitiiviys ovat juuri niitä ominaisuuksia, joita iPhonessa kaipaat - nyt pienemmässä koossa.",
-    "price": 448.9,
-    "inventory": 50
-  },
-  {
-    "id": 31058,
-    "name": "Apple AirPods Pro -nappikuulokkeet",
-    "details": "AirPods Pro -kuulokkeet on suunniteltu tuottamaan vangitseva äänielämys aktiivisen taustamelun vaimennuksen avulla. Läpikuulumistilan ansiosta voit kuulla ympäristön äänet. Kuulokkeiden istuvuus on säädettävissä, joten niitä käyttää mukavasti vaikka koko päivän. AirPodien tavoin AirPods Pro -kuulokkeet muodostavat taianomaisesti yhteyden iPhoneesi tai Apple Watchiisi. Ja ne ovat käyttövalmiit suoraan kotelosta.",
-    "price": 207.9,
-    "inventory": 60
-  },
-  {
-    "id": 68786,
-    "name": "OMEN By HP GT13-0006no -pöytäkone",
-    "details": "Se on pelirakkautta ensisilmäyksellä. OMEN 30L -pöytätietokone on näyttävä myös ominaisuuksiltaan. Tehokkaan prosessorin ja näytönohjaimen ansiosta voit aloittaa pelaamisen heti. Helppo päivitettävyys ja OMEN Command Center varmistavat, että siitä on iloa pitkään.",
-    "price": 2799.9,
-    "inventory": 10
-  },
-  {
-    "id": 34279,
-    "name": "Xiaomi 1C -johdoton imuri",
-    "details": "Kevytrakenteinen, tehokas ja johdoton Xiaomi Handheld Vacuum 1C -varsipölynimuri sopii niin pienten kuin isojenkin tilojen imurointiin. Irrotettavan varren ansiosta laite toimii myös kätevänä rikkaimurina pienroskien siivoamiseen. Kolmen eri tehoasetuksen, neljän eri suuttimen ja HEPA-suodattimen ansiosta varsi-imuri on tehokas koko kodin monipuolinen siivouslaite.",
-    "price": 159.0,
+    "id": 12587,
+    "name": "Oranges from the sunny Naples. Price is per kilo.",
+    "details": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisi scelerisque eu ultrices vitae auctor. Tellus cras adipiscing enim eu turpis egestas pretium. Amet dictum sit amet justo donec enim.",
+    "price": 1.99,
     "inventory": 100
   },
   {
-    "id": 21001,
-    "name": "Apple MacBook Air 13” M1 256 Gt -kannettava",
-    "details": "Applen ohuin ja kevein kannettava. Moottorina supervahva M1-siru. 8-ytimisen prosessorin ansiosta projektit hoituvat salamannopeasti. 7-ytiminen näytönohjain vie grafiikoiltaan vaativat apit ja pelit täysin uusiin ulottuvuuksiin. Ja 16-ytiminen Neural Engine vauhdittaa koneoppimisen tehtäviä. Äänetön, tuulettimeton rakenne ja kaikkien aikojen pisin, jopa 18 tunnin akunkesto. MacBook Air. Helposti mukaan matkaan. Entistä tehokkaampana.",
-    "price": 1158.9,
+    "id": 16241,
+    "name": "A plate of fruit with orange, strawberry, apple, and grapes.",
+    "details": "Dignissim suspendisse in est ante in nibh mauris. Integer quis auctor elit sed vulputate mi sit. Ac orci phasellus egestas tellus rutrum tellus pellentesque eu. Vitae auctor eu augue ut lectus arcu bibendum. Nisi lacus sed viverra tellus in.",
+    "price": 8.99,
+    "inventory": 15
+  },
+  {
+    "id": 16328,
+    "name": "A cluster of five to six tomatoes weighing around 400g.",
+    "details": "Ipsum dolor sit amet consectetur adipiscing. Velit aliquet sagittis id consectetur purus. Et sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque. Arcu ac tortor dignissim convallis aenean et tortor at. Semper auctor neque vitae tempus quam pellentesque.",
+    "price": 2.99,
+    "inventory": 50
+  },
+  {
+    "id": 24805,
+    "name": "A fruit salad with sliced strawberries, cantaloupe melon, kiwi fruit, pineapple, and grapes.",
+    "details": "Maecenas pharetra convallis posuere morbi leo urna molestie at. Rhoncus urna neque viverra justo nec ultrices dui. Facilisi nullam vehicula ipsum a. Pretium lectus quam id leo in. Nulla porttitor massa id neque aliquam vestibulum morbi blandit cursus. Sed risus ultricies tristique nulla.",
+    "price": 9.99,
+    "inventory": 10
+  },
+  {
+    "id": 24806,
+    "name": "A bowl of fruit with honey melon, blueberry, and blackberry.",
+    "details": "Mi quis hendrerit dolor magna. Ornare massa eget egestas purus viverra accumsan in. Platea dictumst quisque sagittis purus sit amet volutpat consequat. Consectetur adipiscing elit pellentesque habitant. Quisque sagittis purus sit amet volutpat consequat mauris nunc.",
+    "price": 7.99,
     "inventory": 20
   },
   {
-    "id": 52790,
-    "name": "Roborock S6 Max V -pölynimurirobotti",
-    "details": "Roborock S6 MaxV on älykäs, kahdella kameralla varustettu robottipölynimuri ja moppauslaite. Se imuroi ja pesee lattiat tarvittaessa yhtä aikaa. Kaksoiskamerat tuovat imurointiin edistyneitä ominaisuuksia ja mielenrauhaa. Jättimäisen vesisäiliön ansiosta se soveltuu erityisen hyvin paljaiden isojen lattia-alueiden siivoukseen. Automaattisesti toimiva robotti-imuri osaa itsenäisesti siivota lattiapinnat kiertäen huonekalut ja muut esteet. Se osaa myös hakeutua lataustelakkaansa ladatakseen itsensä tarvittaessa myös kesken siivouksen. Imurin HEPA-suodatin pitää poistoilman puhtaana.",
-    "price": 449.0,
-    "inventory": 15
+    "id": 93779,
+    "name": "Strawberries! Picked fresh every day. Price per litre.",
+    "details": "Rhoncus urna neque viverra justo nec ultrices dui sapien. Odio aenean sed adipiscing diam donec adipiscing tristique. Nisl pretium fusce id velit. At tempor commodo ullamcorper a lacus vestibulum sed.",
+    "price": 4.99,
+    "inventory": 30
   }
 ]
