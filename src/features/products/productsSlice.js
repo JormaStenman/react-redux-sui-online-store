@@ -37,6 +37,13 @@ export const modifyInventory = createAsyncThunk(
     },
 );
 
+export const clearProducts = createAsyncThunk(
+    'products/clearProducts',
+    async () => {
+        return await client.clearProducts();
+    }
+);
+
 export const productsSlice = createSlice({
     name: productsSliceName,
     initialState: entityAdapter.getInitialState({
@@ -48,11 +55,14 @@ export const productsSlice = createSlice({
             .addCase(fetchAllProducts.fulfilled, (state, action) => {
                 entityAdapter.setAll(state, action.payload.products);
             })
-            .addCase(fetchAllProducts.rejected, (state, action) => {
-                entityAdapter.setAll(state, []);
+            .addCase(fetchAllProducts.rejected, state => {
+                entityAdapter.removeAll(state);
             })
             .addCase(modifyInventory.fulfilled, (state, action) => {
                 entityAdapter.upsertOne(state, action.payload.updated);
+            })
+            .addCase(clearProducts.fulfilled, state => {
+                entityAdapter.removeAll(state);
             })
             .addMatcher(action => action.type.endsWith('/pending'), state => {
                 state.loading = true;

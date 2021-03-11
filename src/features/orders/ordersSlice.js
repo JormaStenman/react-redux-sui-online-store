@@ -29,21 +29,28 @@ export const fetchAllOrders = createAsyncThunk(
             const total = entityAdapter.getSelectors().selectTotal(ordersState);
             return total === 0 && !ordersState.loading;
         },
-    }
+    },
 );
 
 export const createOrder = createAsyncThunk(
     'orders/createOrder',
     async newOrder => {
         return await client.createOrder(newOrder);
-    }
+    },
 );
 
 export const cancelOrder = createAsyncThunk(
     'orders/cancelOrder',
     async orderId => {
         return await client.deleteOrder(orderId);
-    }
+    },
+);
+
+export const clearOrders = createAsyncThunk(
+    'orders/clearOrders',
+    async () => {
+        return await client.clearOrders();
+    },
 );
 
 export const ordersSlice = createSlice({
@@ -58,8 +65,8 @@ export const ordersSlice = createSlice({
             .addCase(fetchAllOrders.fulfilled, (state, action) => {
                 entityAdapter.setAll(state, action.payload.orders);
             })
-            .addCase(fetchAllOrders.rejected, (state, action) => {
-                entityAdapter.setAll(state, []);
+            .addCase(fetchAllOrders.rejected, state => {
+                entityAdapter.removeAll(state);
             })
             .addCase(createOrder.pending, state => {
                 state.latestOrder = null;
@@ -70,6 +77,9 @@ export const ordersSlice = createSlice({
             })
             .addCase(cancelOrder.fulfilled, (state, action) => {
                 entityAdapter.removeOne(state, action.payload.deleted);
+            })
+            .addCase(clearOrders.fulfilled, (state) => {
+                entityAdapter.removeAll(state);
             })
             .addMatcher(action => action.type.endsWith('/pending'), state => {
                 state.loading = true;

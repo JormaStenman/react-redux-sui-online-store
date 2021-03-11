@@ -104,6 +104,8 @@ export const deleteOrder = orderId => {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
+    clearOrders,
+    clearProducts,
     createOrder,
     deleteOrder,
     getAllOrders,
@@ -157,23 +159,36 @@ function storeOrders(orders) {
 // noinspection SpellCheckingInspection
 const productsKey = 'me.stenman.products';
 
+function initProducts() {
+    const productsById = initialProducts.reduce((productsById, product) => {
+        productsById[product.id] = product;
+        return productsById;
+    }, {});
+    storeProducts(productsById);
+    return productsById;
+}
+
 function loadProducts() {
     const item = window.localStorage.getItem(productsKey);
-    return item ? JSON.parse(item) :
-        initialProducts.reduce((productsById, product) => {
-            productsById[product.id] = product;
-            return productsById;
-        }, {});
+    return item ? JSON.parse(item) : initProducts();
 }
 
 function storeProducts(products) {
     window.localStorage.setItem(productsKey, JSON.stringify(products));
 }
 
+function clearOrders() {
+    return promiseToReturn({
+        resultFunc: () => {
+            window.localStorage.removeItem(ordersKey);
+        }
+    })
+}
 
-// (() => {
-//     console.log('clearing orders from localStorage');
-//     window.localStorage.removeItem(ordersKey);
-//     console.log('clearing products from localStorage');
-//     window.localStorage.removeItem(productsKey);
-// })();
+function clearProducts() {
+    return promiseToReturn({
+        resultFunc: () => {
+            window.localStorage.removeItem(productsKey);
+        }
+    })
+}
