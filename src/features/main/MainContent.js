@@ -50,6 +50,11 @@ export default function MainContent() {
             </p>
             <List bulleted relaxed style={{marginTop: '2em', marginBottom: '2em'}}>
                 <List.Item>
+                    This application is an implementation of <a
+                    href='https://github.com/florinpop17/app-ideas/blob/master/Projects/2-Intermediate/Simple-Online-Store.md'>this
+                    app-idea</a>.
+                </List.Item>
+                <List.Item>
                     The application is a <a href='https://en.wikipedia.org/wiki/Single-page_application'>Single
                     Page Application</a> working entirely inside the browser.
                 </List.Item>
@@ -60,7 +65,9 @@ export default function MainContent() {
                     local storage area in the bottom of this page.
                 </List.Item>
                 <List.Item>
-                    There's a client library simulating asynchronous client-server communication.
+                    A client library, which simulates asynchronous client-server communication using <a
+                    href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise'>Promises</a>,
+                    is used between the app state and the actual storage area.
                 </List.Item>
             </List>
             <Header as='h2' dividing>Implementation techniques</Header>

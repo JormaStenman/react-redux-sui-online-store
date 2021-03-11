@@ -1,3 +1,11 @@
+# This is a demo online store app.
+
+Boot up the app, and see the Main tab for more details.
+
+The rest of this file comes from CRA template.
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
 ## Available Scripts
