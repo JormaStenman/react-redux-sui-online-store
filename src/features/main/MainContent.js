@@ -79,6 +79,11 @@ export default function MainContent() {
                     All code is <a href='https://www.w3schools.com/Js/js_2018.asp'>ECMAScript 2018</a>.
                 </List.Item>
                 <List.Item>
+                    The initial project structure was created using <a
+                    href='https://create-react-app.dev'>Create React App</a> with <a
+                    href='https://www.npmjs.com/package/cra-template-redux'>the Redux template</a>.
+                </List.Item>
+                <List.Item>
                     All components are <a href='https://reactjs.org/docs/components-and-props.html'>React Function
                     Components</a>.
                 </List.Item>
@@ -100,8 +105,9 @@ export default function MainContent() {
             </p>
             <List bulleted relaxed style={{marginTop: '2em', marginBottom: '2em'}}>
                 <List.Item>
-                    As the main purpose of developing this app was to explore React and related technologies, and time
-                    was a bit of an issue, unit tests were omitted.
+                    As the main purpose of developing this app was to explore <a
+                    href='https://reactjs.org'>React</a> and related technologies, and time was limited, unit tests were
+                    omitted.
                 </List.Item>
                 <List.Item>
                     There's no login/logout functionality for users.
