@@ -1,5 +1,5 @@
 export function productImageSrc(productId) {
-    return `/product_pics/${productId}.jpeg`;
+    return `${process.env.PUBLIC_URL}/product_pics/${productId}.jpeg`;
 }
 
 const utils = {
