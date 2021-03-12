@@ -6,7 +6,7 @@ import {productImageSrc} from "../../app/productUtils";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchAllProducts, productSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect} from "react";
-import Loading from "../loading/Loading";
+import Loading from "../../app/Loading";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default () => {

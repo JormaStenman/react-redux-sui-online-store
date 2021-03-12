@@ -2,6 +2,14 @@ import initialProducts from '../data/products.json';
 import {random} from 'lodash/number'
 import {v4 as uuid} from 'uuid';
 
+const storage = window.localStorage;
+
+// noinspection SpellCheckingInspection
+const ordersKey = 'me.stenman.orders';
+
+// noinspection SpellCheckingInspection
+const productsKey = 'me.stenman.products';
+
 export const getProductById = id => {
     return promiseToReturn({
         resultFunc: () => {
@@ -12,7 +20,7 @@ export const getProductById = id => {
                 }
             }
             throw new Error(`no product found matching id ${id}`);
-        }
+        },
     });
 };
 
@@ -102,6 +110,20 @@ export const deleteOrder = orderId => {
     });
 };
 
+const clearOrders = () => promiseToReturn({
+    resultFunc: () => {
+        storage.removeItem(ordersKey);
+    },
+});
+
+const clearProducts = () => promiseToReturn({
+    resultFunc: () => {
+        storage.removeItem(productsKey);
+    },
+});
+
+export const hasDataInStorage = () => storage.getItem(ordersKey) !== null || storage.getItem(productsKey) !== null;
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
     clearOrders,
@@ -145,19 +167,13 @@ function promiseToReturn({resultFunc = () => undefined, maxDelay = 5000, errorPr
     );
 }
 
-// noinspection SpellCheckingInspection
-const ordersKey = 'me.stenman.orders';
-
 function loadOrders() {
-    return JSON.parse(window.localStorage.getItem(ordersKey) || '{}');
+    return JSON.parse(storage.getItem(ordersKey) || '{}');
 }
 
 function storeOrders(orders) {
-    window.localStorage.setItem(ordersKey, JSON.stringify(orders));
+    storage.setItem(ordersKey, JSON.stringify(orders));
 }
-
-// noinspection SpellCheckingInspection
-const productsKey = 'me.stenman.products';
 
 function initProducts() {
     const productsById = initialProducts.reduce((productsById, product) => {
@@ -169,26 +185,10 @@ function initProducts() {
 }
 
 function loadProducts() {
-    const item = window.localStorage.getItem(productsKey);
+    const item = storage.getItem(productsKey);
     return item ? JSON.parse(item) : initProducts();
 }
 
 function storeProducts(products) {
-    window.localStorage.setItem(productsKey, JSON.stringify(products));
-}
-
-function clearOrders() {
-    return promiseToReturn({
-        resultFunc: () => {
-            window.localStorage.removeItem(ordersKey);
-        }
-    })
-}
-
-function clearProducts() {
-    return promiseToReturn({
-        resultFunc: () => {
-            window.localStorage.removeItem(productsKey);
-        }
-    })
+    storage.setItem(productsKey, JSON.stringify(products));
 }

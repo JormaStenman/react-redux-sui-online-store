@@ -6,7 +6,7 @@ import {fetchAllProducts, modifyInventory, productSelectors, selectProductsSlice
 import {productImageSrc} from "../../app/productUtils";
 import {currency} from "../../app/numberFormats";
 import {useEffect, useState} from "react";
-import Loading from "../loading/Loading";
+import Loading from "../../app/Loading";
 
 function OrderProductRow({order, productId}) {
     const dispatch = useDispatch();

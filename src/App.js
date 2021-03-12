@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
 import {Container} from "semantic-ui-react";
-import Navbar from "./features/navbar/Navbar";
+import Navbar from "./app/Navbar";
 import {Redirect, Route, Switch} from "react-router-dom";
-import MainContent from "./features/main/MainContent";
+import MainContent from "./app/MainContent";
 import ProductDetails from "./features/products/ProductDetails";
 import ProductList from "./features/products/ProductList";
 import Cart from "./features/cart/Cart";
@@ -11,7 +11,6 @@ import Orders from "./features/orders/Orders";
 import OrderDetails from "./features/orders/OrderDetails";
 
 export default function App() {
-
     return (
         <Container>
             <Navbar/>

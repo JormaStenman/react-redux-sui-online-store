@@ -30,7 +30,7 @@ export const modifyInventory = createAsyncThunk(
     async ({productId, quantity}) => {
         let {product: {id, inventory}} = await client.getProductById(productId);
         inventory += quantity;
-        return await client.updateProduct({
+        return client.updateProduct({
             id,
             inventory,
         });
@@ -40,7 +40,7 @@ export const modifyInventory = createAsyncThunk(
 export const clearProducts = createAsyncThunk(
     'products/clearProducts',
     async () => {
-        return await client.clearProducts();
+        return client.clearProducts();
     }
 );
 
@@ -50,6 +50,7 @@ export const productsSlice = createSlice({
         loading: false,
         error: null,
     }),
+    reducers: {},
     extraReducers: builder => {
         builder
             .addCase(fetchAllProducts.fulfilled, (state, action) => {

@@ -32,7 +32,7 @@ export const orderSelectors = entityAdapter.getSelectors(state => selectOrdersSl
 export const fetchAllOrders = createAsyncThunk(
     'orders/fetchAllOrders',
     async (_) => {
-        return await client.getAllOrders();
+        return client.getAllOrders();
     },
     {
         condition: (_, {getState}) => {
@@ -46,21 +46,21 @@ export const fetchAllOrders = createAsyncThunk(
 export const createOrder = createAsyncThunk(
     'orders/createOrder',
     async newOrder => {
-        return await client.createOrder(newOrder);
+        return client.createOrder(newOrder);
     },
 );
 
 export const cancelOrder = createAsyncThunk(
     'orders/cancelOrder',
     async orderId => {
-        return await client.deleteOrder(orderId);
+        return client.deleteOrder(orderId);
     },
 );
 
 export const clearOrders = createAsyncThunk(
     'orders/clearOrders',
     async () => {
-        return await client.clearOrders();
+        return client.clearOrders();
     },
 );
 
@@ -71,6 +71,7 @@ export const ordersSlice = createSlice({
         error: null,
         latestOrder: null,
     }),
+    reducers: {},
     extraReducers: builder => {
         builder
             .addCase(fetchAllOrders.fulfilled, (state, action) => {

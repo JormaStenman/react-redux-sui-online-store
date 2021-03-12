@@ -4,7 +4,7 @@ import {fetchAllOrders, orderSelectors, orderStatusToText, selectOrdersSlice} fr
 import {Link, useLocation} from "react-router-dom";
 import {fetchAllProducts, productSelectors, selectProductsSlice} from "../products/productsSlice";
 import {useEffect} from "react";
-import Loading from "../loading/Loading";
+import Loading from "../../app/Loading";
 import {truncate} from "lodash/string";
 
 function OrderRow({order}) {

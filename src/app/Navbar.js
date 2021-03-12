@@ -1,7 +1,7 @@
 import {Container, Icon, Label, Menu} from "semantic-ui-react";
 import {Link, useLocation} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {selectNumberOfItemsInCart} from "../cart/cartSlice";
+import {selectNumberOfItemsInCart} from "../features/cart/cartSlice";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default () => {

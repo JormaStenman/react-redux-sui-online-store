@@ -6,8 +6,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchAllProducts, productSelectors, selectProductsSlice} from "./productsSlice";
 import {useEffect, useState} from "react";
 import {addToCart} from "../cart/cartSlice";
-import StoreModal from "../modal/StoreModal";
-import Loading from "../loading/Loading";
+import StoreModal from "../../app/StoreModal";
+import Loading from "../../app/Loading";
 
 export default function ProductDetails() {
     const match = useRouteMatch();

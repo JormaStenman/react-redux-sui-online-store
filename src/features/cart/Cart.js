@@ -6,8 +6,8 @@ import {currency} from "../../app/numberFormats";
 import {Link} from "react-router-dom";
 import {createOrder, OrderStatus, selectLatestOrder} from "../orders/ordersSlice";
 import {useState} from "react";
-import StoreModal from "../modal/StoreModal";
-import Loading from "../loading/Loading";
+import StoreModal from "../../app/StoreModal";
+import Loading from "../../app/Loading";
 
 function ProductRow({productId}) {
     const product = useSelector(state => productSelectors.selectById(state, parseInt(productId)));
