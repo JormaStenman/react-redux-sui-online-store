@@ -49,6 +49,7 @@ export const productsSlice = createSlice({
     initialState: entityAdapter.getInitialState({
         loading: false,
         error: null,
+        clearing: false,
     }),
     reducers: {},
     extraReducers: builder => {
@@ -62,8 +63,15 @@ export const productsSlice = createSlice({
             .addCase(modifyInventory.fulfilled, (state, action) => {
                 entityAdapter.upsertOne(state, action.payload.updated);
             })
+            .addCase(clearProducts.rejected, state => {
+                state.clearing = false;
+            })
+            .addCase(clearProducts.pending, state => {
+                state.clearing = true;
+            })
             .addCase(clearProducts.fulfilled, state => {
                 entityAdapter.removeAll(state);
+                state.clearing = false;
             })
             .addMatcher(action => action.type.endsWith('/pending'), state => {
                 state.loading = true;

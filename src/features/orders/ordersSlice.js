@@ -70,6 +70,7 @@ export const ordersSlice = createSlice({
         loading: false,
         error: null,
         latestOrder: null,
+        clearing: false,
     }),
     reducers: {},
     extraReducers: builder => {
@@ -90,8 +91,15 @@ export const ordersSlice = createSlice({
             .addCase(cancelOrder.fulfilled, (state, action) => {
                 entityAdapter.removeOne(state, action.payload.deleted);
             })
+            .addCase(clearOrders.pending, state => {
+                state.clearing = true;
+            })
+            .addCase(clearOrders.rejected, state => {
+                state.clearing = false;
+            })
             .addCase(clearOrders.fulfilled, (state) => {
                 entityAdapter.removeAll(state);
+                state.clearing = false;
             })
             .addMatcher(action => action.type.endsWith('/pending'), state => {
                 state.loading = true;

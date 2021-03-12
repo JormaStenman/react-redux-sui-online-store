@@ -1,39 +1,23 @@
 import {Button, Container, Header, List, Popup, Segment} from "semantic-ui-react";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {clearOrders, orderSelectors} from "../features/orders/ordersSlice";
-import {clearProducts, productSelectors} from "../features/products/productsSlice";
+import {clearOrders, selectOrdersSlice} from "../features/orders/ordersSlice";
+import {clearProducts, selectProductsSlice} from "../features/products/productsSlice";
 import {hasDataInStorage} from "./client";
 
 function ClearButton() {
     const dispatch = useDispatch();
-    const productsCount = useSelector(state => productSelectors.selectTotal(state));
-    const ordersCount = useSelector(state => orderSelectors.selectTotal(state));
-    const [clearButtonDisabled, toggleClearButtonDisabled] = useState(true);
-    const [clearButtonLoading, setClearButtonLoading] = useState(false);
+    const productsClearing = useSelector(state => selectProductsSlice(state).clearing);
+    const ordersClearing = useSelector(state => selectOrdersSlice(state).clearing);
+    const [clearButtonDisabled, setClearButtonDisabled] = useState(!hasDataInStorage());
 
-    useEffect(() => {
-        (() => {
-            const dataInStorage = hasDataInStorage();
-            console.log(Date.now(), 'MainContent: dataInStorage', dataInStorage);
-            if (!dataInStorage) {
-                // Clear the loading status by default when there's no storage data.
-                // It's set to true only, whenever the clear button is clicked,
-                // and is safe to reset even when it wasn't clicked.
-                console.log(Date.now(), 'MainContent: setClearButtonLoading(false)');
-                setClearButtonLoading(false);
-            }
-            console.log(Date.now(), `MainContent: toggleClearButtonDisabled(${!dataInStorage})`);
-            toggleClearButtonDisabled(!dataInStorage);
-        })();
-    }, [ordersCount, productsCount]);
+    function isClearing() {
+        return productsClearing || ordersClearing;
+    }
 
     function handleClear() {
-        console.log(Date.now(), 'handleClear: setClearButtonLoading(true)');
-        setClearButtonLoading(true);
-        console.log(Date.now(), 'handleClear: toggleClearButtonDisabled(true)');
-        toggleClearButtonDisabled(true);
-        // Handle the local storage clearing through Redux, so that both will match.
+        setClearButtonDisabled(true);
+        // Handle local storage clearing through Redux, so that both states will match.
         dispatch(clearOrders());
         dispatch(clearProducts());
     }
@@ -48,7 +32,7 @@ function ClearButton() {
                 content='Clear local storage area'
                 onClick={() => handleClear()}
                 disabled={clearButtonDisabled}
-                loading={clearButtonLoading}
+                loading={isClearing()}
             />
         </Button.Group>
     );
