@@ -1,36 +1,37 @@
 import {Button, Container, Header, List, Popup, Segment} from "semantic-ui-react";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {clearOrders} from "../features/orders/ordersSlice";
+import {clearOrders, orderSelectors} from "../features/orders/ordersSlice";
 import {clearProducts, productSelectors} from "../features/products/productsSlice";
 import {hasDataInStorage} from "./client";
 
 function ClearButton() {
     const dispatch = useDispatch();
     const productsCount = useSelector(state => productSelectors.selectTotal(state));
+    const ordersCount = useSelector(state => orderSelectors.selectTotal(state));
     const [clearButtonDisabled, toggleClearButtonDisabled] = useState(true);
     const [clearButtonLoading, setClearButtonLoading] = useState(false);
 
     useEffect(() => {
         (() => {
             const dataInStorage = hasDataInStorage();
-            console.log('MainContent: dataInStorage', dataInStorage);
+            console.log(Date.now(), 'MainContent: dataInStorage', dataInStorage);
             if (!dataInStorage) {
                 // Clear the loading status by default when there's no storage data.
                 // It's set to true only, whenever the clear button is clicked,
                 // and is safe to reset even when it wasn't clicked.
+                console.log(Date.now(), 'MainContent: setClearButtonLoading(false)');
                 setClearButtonLoading(false);
             }
+            console.log(Date.now(), `MainContent: toggleClearButtonDisabled(${!dataInStorage})`);
             toggleClearButtonDisabled(!dataInStorage);
         })();
-        // It's not necessary to watch orders count change,
-        // because all storage will be cleared upon the clear button press.
-        // Furthermore, if we did watch the orders too, we'd get two effects,
-        // and the clear button would flash disabled/enabled.
-    }, [productsCount]);
+    }, [ordersCount, productsCount]);
 
     function handleClear() {
+        console.log(Date.now(), 'handleClear: setClearButtonLoading(true)');
         setClearButtonLoading(true);
+        console.log(Date.now(), 'handleClear: toggleClearButtonDisabled(true)');
         toggleClearButtonDisabled(true);
         // Handle the local storage clearing through Redux, so that both will match.
         dispatch(clearOrders());
