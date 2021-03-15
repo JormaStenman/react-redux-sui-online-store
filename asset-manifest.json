@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/react-redux-sui-online-store/static/css/main.ea1455b2.chunk.css",
-    "main.js": "/react-redux-sui-online-store/static/js/main.a311ae94.chunk.js",
-    "main.js.map": "/react-redux-sui-online-store/static/js/main.a311ae94.chunk.js.map",
+    "main.js": "/react-redux-sui-online-store/static/js/main.c9573ad7.chunk.js",
+    "main.js.map": "/react-redux-sui-online-store/static/js/main.c9573ad7.chunk.js.map",
     "runtime-main.js": "/react-redux-sui-online-store/static/js/runtime-main.566f3379.js",
     "runtime-main.js.map": "/react-redux-sui-online-store/static/js/runtime-main.566f3379.js.map",
     "static/css/2.e758c3e4.chunk.css": "/react-redux-sui-online-store/static/css/2.e758c3e4.chunk.css",
@@ -19,6 +19,6 @@
     "static/css/2.e758c3e4.chunk.css",
     "static/js/2.9ce78571.chunk.js",
     "static/css/main.ea1455b2.chunk.css",
-    "static/js/main.a311ae94.chunk.js"
+    "static/js/main.c9573ad7.chunk.js"
   ]
 }
