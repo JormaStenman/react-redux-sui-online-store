@@ -78,6 +78,10 @@ export default () => (
             <List.Item>Product inventories change when orders are placed or cancelled.</List.Item>
             <List.Item>A navigation bar is always visible at the top of the page.</List.Item>
         </List>
+        <p>
+            The application's source code lives <a
+            href='https://github.com/JormaStenman/react-redux-sui-online-store'>here</a>.
+        </p>
         <Header as='h2' dividing>Implementation aspects</Header>
         <p>
             A few implementation details worth mentioning:

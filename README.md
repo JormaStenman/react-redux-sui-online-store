@@ -1,6 +1,6 @@
 # This is a demo online store app.
 
-Boot up the app, and see the Main tab for more details.
+Boot up [the app](https://jormastenman.github.io/react-redux-sui-online-store), and see the Main tab for more details.
 
 The rest of this file comes from CRA template.
 
