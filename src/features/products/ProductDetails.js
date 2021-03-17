@@ -9,7 +9,8 @@ import {addToCart} from "../cart/cartSlice";
 import StoreModal from "../../app/StoreModal";
 import Loading from "../../app/Loading";
 
-export default function ProductDetails() {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default () => {
     const match = useRouteMatch();
     const product = useSelector(state => productSelectors.selectById(state, match.params.productId));
     const loading = useSelector(state => selectProductsSlice(state).loading);
@@ -80,7 +81,7 @@ export default function ProductDetails() {
                     render={() => (
                         <>
                             <Modal.Header>
-                                One of <i>{product.name}</i> added in <Link to='/cart' replace>cart</Link>.
+                                One of "<i>{product.name}</i>" added in <Link to='/cart' replace>cart</Link>.
                             </Modal.Header>
                             <Modal.Content>
                                 <Image size='tiny' inline src={productImageSrc(product.id)}/>

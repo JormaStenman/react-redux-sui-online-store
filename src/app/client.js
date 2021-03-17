@@ -145,7 +145,7 @@ function getError(errorProb) {
     return null;
 }
 
-function promiseToReturn({resultFunc = () => undefined, maxDelay = 5000, errorProb = 0.0}) {
+function promiseToReturn({resultFunc = () => undefined, maxDelay = 2000, errorProb = 0.0}) {
     return new Promise((resolve, reject) => {
             setTimeout(() => {
                     const error = getError(errorProb);

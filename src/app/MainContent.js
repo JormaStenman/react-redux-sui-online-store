@@ -1,62 +1,6 @@
-import {Button, Container, Header, List, Popup, Segment} from "semantic-ui-react";
-import React, {useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {clearOrders, selectOrdersSlice} from "../features/orders/ordersSlice";
-import {clearProducts, selectProductsSlice} from "../features/products/productsSlice";
-import {hasDataInStorage} from "./client";
-
-function ClearButton() {
-    const dispatch = useDispatch();
-    const productsClearing = useSelector(state => selectProductsSlice(state).clearing);
-    const ordersClearing = useSelector(state => selectOrdersSlice(state).clearing);
-    const [clearButtonDisabled, setClearButtonDisabled] = useState(!hasDataInStorage());
-
-    function isClearing() {
-        return productsClearing || ordersClearing;
-    }
-
-    function handleClear() {
-        setClearButtonDisabled(true);
-        // Handle local storage clearing through Redux, so that both states will match.
-        dispatch(clearOrders());
-        dispatch(clearProducts());
-    }
-
-    const trigger = (
-        // If the button isn't wrapped in anything, and happens to be disabled,
-        // the Popup tooltip won't show.
-        <Button.Group>
-            <Button
-                negative
-                icon='trash alternate'
-                content='Clear local storage area'
-                onClick={() => handleClear()}
-                disabled={clearButtonDisabled}
-                loading={isClearing()}
-            />
-        </Button.Group>
-    );
-
-    const content = clearButtonDisabled ? (
-        <Segment basic compact>
-            <p>No data in this application's local storage area.</p>
-            <p>An easy way to load some is to visit the Products page.</p>
-        </Segment>
-    ) : (
-        <Segment basic compact>
-            <p>Click to remove this application's data from the local storage area.</p>
-        </Segment>
-    );
-
-    return (
-        <Popup
-            content={content}
-            trigger={trigger}
-            on={['hover', 'click']}
-            position='bottom left'
-        />
-    );
-}
+import {Container, Header, List} from "semantic-ui-react";
+import React from "react";
+import ClearButton from "./ClearButton";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default () => (
@@ -138,6 +82,10 @@ export default () => (
             <List.Item>
                 Some utility functions from <a href='https://lodash.com'>Lodash</a> are used.
             </List.Item>
+            <List.Item>
+                Unit tests were written using <a href='https://jestjs.io'>Jest</a> and <a
+                href='https://testing-library.com/docs/react-testing-library/intro/'>React Testing Library</a>.
+            </List.Item>
         </List>
         <Header as='h2' dividing>What next?</Header>
         <p>
@@ -147,8 +95,8 @@ export default () => (
         <List bulleted relaxed style={{marginTop: '2em', marginBottom: '2em'}}>
             <List.Item>
                 As the main purpose of developing this app was to explore <a
-                href='https://reactjs.org'>React</a> and related technologies, and time was limited, unit tests were
-                omitted.
+                href='https://reactjs.org'>React</a> and related technologies, and time was limited, the unit tests are
+                not as comprehensive as they could be.
             </List.Item>
             <List.Item>
                 There's no login/logout functionality for users.

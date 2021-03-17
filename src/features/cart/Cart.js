@@ -37,7 +37,7 @@ function ProductRow({productId}) {
                         type='number'
                         min={1}
                         max={product.inventory}
-                        defaultValue={quantity}
+                        defaultValue={isNaN(quantity) ? 1 : quantity}
                         onChange={handleQuantityChange}
                     />
                 </Table.Cell>
@@ -51,7 +51,11 @@ function CartTotal() {
     const cart = useSelector(state => selectCartSlice(state));
     const products = useSelector(state => productSelectors.selectEntities(state));
     const cartTotal = Object.keys(cart).reduce(
-        (total, productId) => total + cart[productId] * products[parseInt(productId)].price, 0.0
+        (total, productId) => {
+            const inCart = cart[productId];
+            const quantity = isNaN(inCart) ? 0 : inCart;
+            return total + quantity * products[parseInt(productId)].price;
+        }, 0.0
     );
     return (
         <span>Cart total:&nbsp;<strong>{currency.format(cartTotal)}</strong></span>

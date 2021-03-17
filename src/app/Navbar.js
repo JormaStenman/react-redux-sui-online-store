@@ -17,7 +17,7 @@ export default () => {
                     </NavbarItem>
                     <NavbarItem path='/cart'>
                         <Icon name='shopping cart'/>Shopping cart
-                        {numItems ? <Label circular>{numItems}</Label> : null}
+                        {numItems ? <Label circular data-testid='cart-numitems'>{numItems}</Label> : null}
                     </NavbarItem>
                 </Menu.Menu>
             </Menu>

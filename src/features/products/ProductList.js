@@ -32,7 +32,7 @@ export default () => {
             <Item.Group divided>
                 {products.map(product => (
                     <Item key={product.id} as={Link} to={loc => itemLoc(loc, product.id)}>
-                        <Item.Image size='tiny' src={productImageSrc(product.id)}/>
+                        <Item.Image size='tiny' src={productImageSrc(product.id)} alt={`product-id-${product.id}`}/>
                         <Item.Content>
                             <Item.Header>{product.name}</Item.Header>
                             <Item.Meta>
